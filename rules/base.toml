@@ -1,0 +1,80 @@
+title = "gitlab-misconfig config"
+
+[projects]
+[projects.project.project_visibility]
+description= '项目可见性'
+keywords= 'internal'
+
+[projects.project.project_pages_access_level]
+description= '项目权限'
+keywords= 'private'
+
+[projects.project.project_security_and_compliance_enabled]
+description= '是否启用gitlab安全功能'
+keywords= 'True'
+
+[projects.project.project_approvals_before_merge]
+description= '合并前是否通过审批'
+keywords= 1
+
+[projects.project.project_push_rules_unsigned_commits]
+description= '推送代码是否进过签名'
+keywords= 'True'
+
+[projects.project.project_push_rules_comitter_check]
+description= '推送代码是否进过签名'
+keywords= 'True'
+
+[projects.project.project_protected_branches]
+description= '推送代码是否进过签名'
+keywords= 'True'
+
+[projects.project.project_access_tokens]
+description= 'project access token'
+keywords= 'False'
+
+[projects.project.project_deploy_keys]
+description= 'project deploy keys'
+keywords= 'False'
+
+[projects.project.project_file_pipeline]
+description= 'project_file_pipeline'
+keywords= 'True'
+
+[projects.project.project_merged_pipeline]
+description= 'project merged pipeline'
+keywords= 'True'
+
+[projects.project.project_merged_pipeline_stages]
+description= 'project merged pipeline stages'
+keywords= 'None'
+
+[projects.project.project_merged_pipeline_image]
+description= 'project merged pipeline image'
+keywords= 'None'
+
+[projects.project.project_file_codeowners]
+description= 'project file codeowners'
+keywords= 'True'
+
+[projects.project.project_shared_runners_enabled]
+description= 'project shared runners enabled'
+keywords= 'False'
+
+[projects.project.project_runners_shared]
+description= 'project runners shared'
+keywords= 'False'
+
+[projects.project.project_runners_notshared]
+description= 'project runners notshared'
+keywords= 'True'
+
+
+[users]
+[users.admin.admin_max_numbers]
+description= '要求gitlab管理员数量不要超过1个'
+keywords= 1
+
+[users.auditor.auditor_max_numbers ]
+description = '要求至少设置一名审计人员'
+keywords = 1
