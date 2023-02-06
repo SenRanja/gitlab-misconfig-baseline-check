@@ -42,6 +42,7 @@ func (e Engine) Analysis(gitlabClient *gitlab.Client, options *types.Options) {
 }
 
 func initConfig(rulePath string) *viper.Viper {
+	// 设定值，如果用户没有指定，就使用内置的base.toml的配置
 	config := viper.New()
 	if rulePath != "" {
 		config.SetConfigFile(rulePath)

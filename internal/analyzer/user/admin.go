@@ -4,6 +4,7 @@ import (
 	"gitlab-misconfig/internal/gitlab"
 )
 
+// 统计 Admin 数量
 func countAdminNumbers(users []*gitlab.User) int {
 	var totalNumberOfAdmin = 0
 	for i := 0; i < len(users); i++ {

@@ -65,6 +65,7 @@ const (
 )
 
 // A Client manages communication with the GitLab API.
+// 用来访问gitlab API接口的客户端，大部分接口会使用这里
 type Client struct {
 	// HTTP client used to communicate with the API.
 	client *retryablehttp.Client
@@ -215,6 +216,7 @@ type Client struct {
 
 // ListOptions specifies the optional parameters to various List methods that
 // support pagination.
+// 处理分页问题，大部分接口会使用这里
 type ListOptions struct {
 	// For paginated result sets, page of results to retrieve.
 	Page int `url:"page,omitempty" json:"page,omitempty"`
@@ -615,6 +617,37 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Requ
 	return req, nil
 }
 
+// 我根据上面的 NewRequest()函数修改，去掉API函数拼接，方便对gitlab网页进行爬取来获取相关数据
+// 不清楚数据为什么没有回来，resp.Body中没有数据
+func (c *Client) NewRequestWithoutAPI(method, path string) (*retryablehttp.Request, error) {
+	u := *c.baseURL
+	unescaped, err := url.PathUnescape(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set the encoded path data
+	u.RawPath = c.baseURL.Host + path
+	u.Path = c.baseURL.Host + unescaped
+
+	// Create a request specific headers map.
+	reqHeaders := make(http.Header)
+	//reqHeaders.Set("Accept", "application/json")
+
+	if c.UserAgent != "" {
+		reqHeaders.Set("User-Agent", c.UserAgent)
+	}
+
+	var body interface{}
+
+	req, err := retryablehttp.NewRequest(method, u.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // UploadRequest creates an API request for uploading a file. The method
 // expects a relative URL path that will be resolved relative to the base
 // URL of the Client. Relative URL paths should always be specified without
@@ -754,6 +787,7 @@ func (r *Response) populatePageValues() {
 // interface, the raw response body will be written to v, without attempting to
 // first decode it.
 func (c *Client) Do(req *retryablehttp.Request, v interface{}) (*Response, error) {
+	// 是gitlab自己封装的HTTP请求方法。如果传入第二个参数（指针）通常涉及json数据，然后将json赋值。
 	// If not yet configured, try to configure the rate limiter. Fail
 	// silently as the limiter will be disabled in case of an error.
 	c.configureLimiterOnce.Do(func() { c.configureLimiter(req.Context()) })
@@ -818,6 +852,7 @@ func (c *Client) Do(req *retryablehttp.Request, v interface{}) (*Response, error
 		return response, err
 	}
 
+	// v如果传入的话，是一个指针。在这里会将json数据根据v的类型进行赋值。
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
 			_, err = io.Copy(w, resp.Body)

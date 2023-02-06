@@ -10,12 +10,18 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/audit_events.html
 type AuditEvent struct {
-	ID         int               `json:"id"`
-	AuthorID   int               `json:"author_id"`
-	EntityID   int               `json:"entity_id"`
-	EntityType string            `json:"entity_type"`
-	Details    AuditEventDetails `json:"details"`
-	CreatedAt  *time.Time        `json:"created_at"`
+	ID int `json:"id"`
+	// 日志id
+	AuthorID int `json:"author_id"`
+	// 操作者的user id
+	// 如果是登陆失败，AuthorID 和 EntityID 都是 -1
+	EntityID int `json:"entity_id"`
+	// 操作对象的id
+	EntityType string `json:"entity_type"`
+	// 操作对象的类型：Project、Group或User
+	Details   AuditEventDetails `json:"details"`
+	CreatedAt *time.Time        `json:"created_at"`
+	// 什么时间操作的
 }
 
 // AuditEventDetails represents the details portion of an audit event for
@@ -23,36 +29,52 @@ type AuditEvent struct {
 // for an audit event depend on the action being recorded.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/audit_events.html
+
+// 访问 http://192.168.3.199:40080/api/v4/audit_events 会获得[{xx}]，xx.details就是这里的数据结构
 type AuditEventDetails struct {
-	With          string      `json:"with"`
-	Add           string      `json:"add"`
-	As            string      `json:"as"`
-	Change        string      `json:"change"`
-	From          string      `json:"from"`
-	To            string      `json:"to"`
-	Remove        string      `json:"remove"`
-	CustomMessage string      `json:"custom_message"`
-	AuthorName    string      `json:"author_name"`
-	TargetID      interface{} `json:"target_id"`
-	TargetType    string      `json:"target_type"`
-	TargetDetails string      `json:"target_details"`
-	IPAddress     string      `json:"ip_address"`
-	EntityPath    string      `json:"entity_path"`
-	FailedLogin   string      `json:"failed_login"`
+	With string `json:"with"`
+	// with如果是"standard"，通常是正常登录的用户
+	Add string `json:"add"`
+	// add 类型。如添加用户，"add": "user",
+	As string `json:"as"`
+	// 指添加某用户具有的权限，比如是审计，运维者，访客
+	Change string `json:"change"`
+	From   string `json:"from"`
+	To     string `json:"to"`
+	Remove string `json:"remove"`
+	// remove字段为User或者Group等，删除用户或项目
+	CustomMessage string `json:"custom_message"`
+	AuthorName    string `json:"author_name"`
+	// 操作者的名字
+	TargetID interface{} `json:"target_id"`
+	// 操作对象的id，删除用户则是用户的id
+	TargetType    string `json:"target_type"`
+	TargetDetails string `json:"target_details"`
+	// 目标细节，但具体不详
+	// 如果是删除用户，这里就是 用户名
+	// 如果是新建用户，这里就是用户名
+	IPAddress string `json:"ip_address"`
+	// 要么是操作者的ip，要么是登录失败者的ip
+	EntityPath string `json:"entity_path"`
+	// 实体路径，但具体不详
+	// 如果是删除用户，这里就是 用户名
+	// 如果是新建用户，这里就是用户名
+	FailedLogin string `json:"failed_login"`
+	// 登陆失败，此处通常为 "STANDARD"。 登陆失败这里不会存用户输入的密码。
 }
 
 // AuditEventsService handles communication with the project/group/instance
 // audit event related methods of the GitLab API.
-//
 // GitLab API docs: https://docs.gitlab.com/ee/api/audit_events.html
+// 创建专门用于审计Audit的类
 type AuditEventsService struct {
 	client *Client
 }
 
 // ListAuditEventsOptions represents the available ListProjectAuditEvents(),
 // ListGroupAuditEvents() or ListInstanceAuditEvents() options.
-//
 // GitLab API docs: https://docs.gitlab.com/ee/api/audit_events.html
+// 此处限定时间范围，参考audit_event/audit_events.go中代码，对此处赋值
 type ListAuditEventsOptions struct {
 	ListOptions
 	CreatedAfter  *time.Time `url:"created_after,omitempty" json:"created_after,omitempty"`
@@ -61,8 +83,12 @@ type ListAuditEventsOptions struct {
 
 // ListInstanceAuditEvents gets a list of audit events for instance.
 // Authentication as Administrator is required.
-//
 // GitLab API docs: https://docs.gitlab.com/ee/api/audit_events.html#retrieve-all-instance-audit-events
+
+// 顺序打印其返回值，即 `AuditEvent` 类型，如下：
+// 注意`AuditEvent`.`CreatedAt`字段是 *time.Time 类型
+// fmt.Println(ae_v.ID, ae_v.AuthorID, ae_v.EntityID, ae_v.EntityType, ae_v.Details, ae_v.CreatedAt)
+// 36 36 36 User {standard        syj 36 User syj 192.168.3.87 syj } 2023-02-06 02:41:27.414 +0000 UTC
 func (s *AuditEventsService) ListInstanceAuditEvents(opt *ListAuditEventsOptions, options ...RequestOptionFunc) ([]*AuditEvent, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodGet, "audit_events", opt, options)
 	if err != nil {

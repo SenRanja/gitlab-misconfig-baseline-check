@@ -143,6 +143,8 @@ type ListUsersOptions struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html#list-users
 func (s *UsersService) ListUsers(opt *ListUsersOptions, options ...RequestOptionFunc) ([]*User, *Response, error) {
+	// 待会儿看一下传入的 opt, options这两个变量里有什么
+
 	req, err := s.client.NewRequest(http.MethodGet, "users", opt, options)
 	if err != nil {
 		return nil, nil, err
