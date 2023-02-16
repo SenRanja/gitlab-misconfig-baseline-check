@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"gitlab-misconfig/internal/analyzer/audit_event"
 	"gitlab-misconfig/internal/analyzer/project"
@@ -28,9 +29,10 @@ func New() Analyzer {
 
 func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper) {
 
-	//user
-	users := getGitlabUsers(gitlabClient)
-	// 【admin数量】
+	// ------------【user】-------------------------------------------------------------
+	// 【user】
+	users, usersService := getGitlabUsers(gitlabClient)
+	// admin数量
 	log.Info("[#] admin权限检查")
 	adminMaxNumbers := config.GetString("users.admin.admin_max_numbers.keywords")
 	totalNumberOfAdmin := countAdminNumbers(users)
@@ -40,7 +42,7 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 		log.Info("gitlab管理员数量多于", totalNumberOfAdmin, "人")
 	}
 
-	// 【auditor数量】
+	// auditor数量
 	log.Info("[#] auditor权限检查")
 	auditorMaxNumbers := config.GetString("users.auditor.auditor_max_numbers.keywords")
 	totalNumberOfAuditor := countAuditorNumbers(users)
@@ -52,13 +54,27 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 		log.Info("gitlab审计人员至少设置", auditorMaxNumbers, "人")
 	}
 
-	// user
-	// 【用户双因素认证数量】
+	// 用户双因素认证数量
 	log.Info("[#] user权限检查")
 	countTwoFactorEnabledNum := countTwoFactorEnabled(users)
 	log.Debug("开启双因素认证用户数量", countTwoFactorEnabledNum)
 
-	// 日志审计
+	// 统计外部用户数量
+	log.Info("[#] 统计外部用户数量")
+	countExternal := countExternalDetect(users)
+	log.Debug("统计外部用户数量", countExternal)
+
+	// 遍历单个用户，输出group和project信息
+	for _, v := range users {
+		tmpRes, _, _ := usersService.GetUserMemberships(v.ID, nil, nil)
+		groupMembership := GetUserMembership(tmpRes, "group")
+		projectMembership := GetUserMembership(tmpRes, "project")
+		fmt.Println("组关系", groupMembership)
+		fmt.Println("项目关系", projectMembership)
+	}
+
+	// ----------【日志审计】---------------------------------------------------------------
+	// 【日志审计】
 	log.Info("[#] 审计功能")
 	// 获取近期审计日志
 	aes, err := audit_event.GetAllEvents(gitlabClient)
@@ -148,6 +164,7 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 	}
 	log.Info("[###] 组异动用户权限检测完毕")
 
+	// -----------【Admin Settings】--------------------------------------------------------------
 	// 【Admin Settings】
 	log.Info("[#] Admin Settings检测开始")
 	setting, err := settings.GetAllEvents(gitlabClient)
@@ -175,6 +192,9 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 	// 用户登录会话默认维持时间
 	sessionExpireDelayDetect := settings.SessionExpireDelayDetect(setting)
 	log.Info("[###] 用户登录会话默认维持时间(秒)", sessionExpireDelayDetect)
+	// 受限的能见度
+	RestrictedVisibilityLevels := settings.RestrictedVisibilityLevelsDetect(setting)
+	log.Info("[###] 受限的能见度", RestrictedVisibilityLevels)
 	// 项目的默认可见度
 	defaultProjectVisibilityDetect := settings.DefaultProjectVisibilityDetect(setting)
 	log.Info("[###] 项目的默认可见度", defaultProjectVisibilityDetect)
@@ -221,6 +241,7 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 
 	log.Info("[#] Admin Settings检测完毕")
 
+	// ---------【project】----------------------------------------------------------------
 	// 【project】
 	log.Info("[#] 项目配置分析检测开始")
 	AllProjects, projectsService := project.ListAllProjects(gitlabClient)

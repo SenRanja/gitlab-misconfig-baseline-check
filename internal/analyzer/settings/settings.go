@@ -52,6 +52,15 @@ func SessionExpireDelayDetect(settings *gitlab.Settings) int {
 	return settings.SessionExpireDelay
 }
 
+// 受限的能见度
+func RestrictedVisibilityLevelsDetect(settings *gitlab.Settings) []string {
+	var restrictedVisibilityLevels []string
+	for _, v := range settings.RestrictedVisibilityLevels {
+		restrictedVisibilityLevels = append(restrictedVisibilityLevels, string(v))
+	}
+	return restrictedVisibilityLevels
+}
+
 // 项目的默认可见度
 func DefaultProjectVisibilityDetect(settings *gitlab.Settings) string {
 	return string(settings.DefaultProjectVisibility)

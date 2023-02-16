@@ -416,7 +416,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.Tags = &TagsService{client: c}
 	c.Todos = &TodosService{client: c}
 	c.Topics = &TopicsService{client: c}
-	c.Users = &UsersService{client: c}
+	c.Users = &UsersService{Client: c}
 	c.Validate = &ValidateService{client: c}
 	c.Version = &VersionService{client: c}
 	c.Wikis = &WikisService{client: c}

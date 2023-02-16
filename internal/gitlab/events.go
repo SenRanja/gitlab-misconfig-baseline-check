@@ -91,13 +91,13 @@ func (s *UsersService) ListUserContributionEvents(uid interface{}, opt *ListCont
 	}
 	u := fmt.Sprintf("users/%s/events", user)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var cs []*ContributionEvent
-	resp, err := s.client.Do(req, &cs)
+	resp, err := s.Client.Do(req, &cs)
 	if err != nil {
 		return nil, resp, err
 	}
