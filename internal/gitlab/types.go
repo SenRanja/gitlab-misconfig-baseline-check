@@ -493,6 +493,7 @@ func NoteType(v NoteTypeValue) *NoteTypeValue {
 }
 
 // NotificationLevelValue represents a notification level.
+// 通知级别值
 type NotificationLevelValue int
 
 // String implements the fmt.Stringer interface.

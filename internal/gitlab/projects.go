@@ -31,94 +31,96 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html
 type ProjectsService struct {
-	client *Client
+	Client *Client
 }
 
 // Project represents a GitLab project.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html
+// Project类 是查询仓库后，仓库返回的结果的解析
 type Project struct {
-	ID                                        int                        `json:"id"`
-	Description                               string                     `json:"description"`
-	DefaultBranch                             string                     `json:"default_branch"`
-	Public                                    bool                       `json:"public"`
-	Visibility                                VisibilityValue            `json:"visibility"`
-	SSHURLToRepo                              string                     `json:"ssh_url_to_repo"`
-	HTTPURLToRepo                             string                     `json:"http_url_to_repo"`
-	WebURL                                    string                     `json:"web_url"`
-	ReadmeURL                                 string                     `json:"readme_url"`
-	TagList                                   []string                   `json:"tag_list"`
-	Topics                                    []string                   `json:"topics"`
-	Owner                                     *User                      `json:"owner"`
-	Name                                      string                     `json:"name"`
-	NameWithNamespace                         string                     `json:"name_with_namespace"`
-	Path                                      string                     `json:"path"`
-	PathWithNamespace                         string                     `json:"path_with_namespace"`
-	IssuesEnabled                             bool                       `json:"issues_enabled"`
-	OpenIssuesCount                           int                        `json:"open_issues_count"`
-	MergeRequestsEnabled                      bool                       `json:"merge_requests_enabled"`
-	ApprovalsBeforeMerge                      int                        `json:"approvals_before_merge"`
-	JobsEnabled                               bool                       `json:"jobs_enabled"`
-	WikiEnabled                               bool                       `json:"wiki_enabled"`
-	SnippetsEnabled                           bool                       `json:"snippets_enabled"`
-	ResolveOutdatedDiffDiscussions            bool                       `json:"resolve_outdated_diff_discussions"`
-	ContainerExpirationPolicy                 *ContainerExpirationPolicy `json:"container_expiration_policy,omitempty"`
-	ContainerRegistryEnabled                  bool                       `json:"container_registry_enabled"`
-	ContainerRegistryAccessLevel              AccessControlValue         `json:"container_registry_access_level"`
-	ContainerRegistryImagePrefix              string                     `json:"container_registry_image_prefix,omitempty"`
-	CreatedAt                                 *time.Time                 `json:"created_at,omitempty"`
-	LastActivityAt                            *time.Time                 `json:"last_activity_at,omitempty"`
-	CreatorID                                 int                        `json:"creator_id"`
-	Namespace                                 *ProjectNamespace          `json:"namespace"`
-	ImportStatus                              string                     `json:"import_status"`
-	ImportError                               string                     `json:"import_error"`
-	Permissions                               *Permissions               `json:"permissions"`
-	MarkedForDeletionAt                       *ISOTime                   `json:"marked_for_deletion_at"`
-	EmptyRepo                                 bool                       `json:"empty_repo"`
-	Archived                                  bool                       `json:"archived"`
-	AvatarURL                                 string                     `json:"avatar_url"`
-	LicenseURL                                string                     `json:"license_url"`
-	License                                   *ProjectLicense            `json:"license"`
-	SharedRunnersEnabled                      bool                       `json:"shared_runners_enabled"`
-	ForksCount                                int                        `json:"forks_count"`
-	StarCount                                 int                        `json:"star_count"`
-	RunnersToken                              string                     `json:"runners_token"`
-	PublicJobs                                bool                       `json:"public_jobs"`
-	AllowMergeOnSkippedPipeline               bool                       `json:"allow_merge_on_skipped_pipeline"`
-	OnlyAllowMergeIfPipelineSucceeds          bool                       `json:"only_allow_merge_if_pipeline_succeeds"`
-	OnlyAllowMergeIfAllDiscussionsAreResolved bool                       `json:"only_allow_merge_if_all_discussions_are_resolved"`
-	RemoveSourceBranchAfterMerge              bool                       `json:"remove_source_branch_after_merge"`
-	PrintingMergeRequestLinkEnabled           bool                       `json:"printing_merge_request_link_enabled"`
-	LFSEnabled                                bool                       `json:"lfs_enabled"`
-	RepositoryStorage                         string                     `json:"repository_storage"`
-	RequestAccessEnabled                      bool                       `json:"request_access_enabled"`
-	MergeMethod                               MergeMethodValue           `json:"merge_method"`
-	ForkedFromProject                         *ForkParent                `json:"forked_from_project"`
-	Mirror                                    bool                       `json:"mirror"`
-	MirrorUserID                              int                        `json:"mirror_user_id"`
-	MirrorTriggerBuilds                       bool                       `json:"mirror_trigger_builds"`
-	OnlyMirrorProtectedBranches               bool                       `json:"only_mirror_protected_branches"`
-	MirrorOverwritesDivergedBranches          bool                       `json:"mirror_overwrites_diverged_branches"`
-	PackagesEnabled                           bool                       `json:"packages_enabled"`
-	ServiceDeskEnabled                        bool                       `json:"service_desk_enabled"`
-	ServiceDeskAddress                        string                     `json:"service_desk_address"`
-	IssuesAccessLevel                         AccessControlValue         `json:"issues_access_level"`
-	ReleasesAccessLevel                       AccessControlValue         `json:"releases_access_level,omitempty"`
-	RepositoryAccessLevel                     AccessControlValue         `json:"repository_access_level"`
-	MergeRequestsAccessLevel                  AccessControlValue         `json:"merge_requests_access_level"`
-	ForkingAccessLevel                        AccessControlValue         `json:"forking_access_level"`
-	WikiAccessLevel                           AccessControlValue         `json:"wiki_access_level"`
-	BuildsAccessLevel                         AccessControlValue         `json:"builds_access_level"`
-	SnippetsAccessLevel                       AccessControlValue         `json:"snippets_access_level"`
-	PagesAccessLevel                          AccessControlValue         `json:"pages_access_level"`
-	OperationsAccessLevel                     AccessControlValue         `json:"operations_access_level"`
-	AnalyticsAccessLevel                      AccessControlValue         `json:"analytics_access_level"`
-	AutocloseReferencedIssues                 bool                       `json:"autoclose_referenced_issues"`
-	SuggestionCommitMessage                   string                     `json:"suggestion_commit_message"`
-	AutoCancelPendingPipelines                string                     `json:"auto_cancel_pending_pipelines"`
-	CIForwardDeploymentEnabled                bool                       `json:"ci_forward_deployment_enabled"`
-	SquashOption                              SquashOptionValue          `json:"squash_option"`
-	EnforceAuthChecksOnUploads                bool                       `json:"enforce_auth_checks_on_uploads,omitempty"`
+	ID                             int                        `json:"id"`
+	Description                    string                     `json:"description"`
+	DefaultBranch                  string                     `json:"default_branch"`
+	Public                         bool                       `json:"public"`
+	Visibility                     VisibilityValue            `json:"visibility"`
+	SSHURLToRepo                   string                     `json:"ssh_url_to_repo"`
+	HTTPURLToRepo                  string                     `json:"http_url_to_repo"`
+	WebURL                         string                     `json:"web_url"`
+	ReadmeURL                      string                     `json:"readme_url"`
+	TagList                        []string                   `json:"tag_list"`
+	Topics                         []string                   `json:"topics"`
+	Owner                          *User                      `json:"owner"`
+	Name                           string                     `json:"name"`
+	NameWithNamespace              string                     `json:"name_with_namespace"`
+	Path                           string                     `json:"path"`
+	PathWithNamespace              string                     `json:"path_with_namespace"`
+	IssuesEnabled                  bool                       `json:"issues_enabled"`
+	OpenIssuesCount                int                        `json:"open_issues_count"`
+	MergeRequestsEnabled           bool                       `json:"merge_requests_enabled"`
+	ApprovalsBeforeMerge           int                        `json:"approvals_before_merge"`
+	JobsEnabled                    bool                       `json:"jobs_enabled"`
+	WikiEnabled                    bool                       `json:"wiki_enabled"`
+	SnippetsEnabled                bool                       `json:"snippets_enabled"`
+	ResolveOutdatedDiffDiscussions bool                       `json:"resolve_outdated_diff_discussions"`
+	ContainerExpirationPolicy      *ContainerExpirationPolicy `json:"container_expiration_policy,omitempty"`
+	ContainerRegistryEnabled       bool                       `json:"container_registry_enabled"`
+	ContainerRegistryAccessLevel   AccessControlValue         `json:"container_registry_access_level"`
+	ContainerRegistryImagePrefix   string                     `json:"container_registry_image_prefix,omitempty"`
+	CreatedAt                      *time.Time                 `json:"created_at,omitempty"`
+	LastActivityAt                 *time.Time                 `json:"last_activity_at,omitempty"`
+	CreatorID                      int                        `json:"creator_id"`
+	Namespace                      *ProjectNamespace          `json:"namespace"`
+	ImportStatus                   string                     `json:"import_status"`
+	ImportError                    string                     `json:"import_error"`
+	// `Permissions` 是ACL，对`用户(`项目本身权限`)`和 对`组`的访问权限
+	Permissions                               *Permissions       `json:"permissions"`
+	MarkedForDeletionAt                       *ISOTime           `json:"marked_for_deletion_at"`
+	EmptyRepo                                 bool               `json:"empty_repo"`
+	Archived                                  bool               `json:"archived"`
+	AvatarURL                                 string             `json:"avatar_url"`
+	LicenseURL                                string             `json:"license_url"`
+	License                                   *ProjectLicense    `json:"license"`
+	SharedRunnersEnabled                      bool               `json:"shared_runners_enabled"`
+	ForksCount                                int                `json:"forks_count"`
+	StarCount                                 int                `json:"star_count"`
+	RunnersToken                              string             `json:"runners_token"`
+	PublicJobs                                bool               `json:"public_jobs"`
+	AllowMergeOnSkippedPipeline               bool               `json:"allow_merge_on_skipped_pipeline"`
+	OnlyAllowMergeIfPipelineSucceeds          bool               `json:"only_allow_merge_if_pipeline_succeeds"`
+	OnlyAllowMergeIfAllDiscussionsAreResolved bool               `json:"only_allow_merge_if_all_discussions_are_resolved"`
+	RemoveSourceBranchAfterMerge              bool               `json:"remove_source_branch_after_merge"`
+	PrintingMergeRequestLinkEnabled           bool               `json:"printing_merge_request_link_enabled"`
+	LFSEnabled                                bool               `json:"lfs_enabled"`
+	RepositoryStorage                         string             `json:"repository_storage"`
+	RequestAccessEnabled                      bool               `json:"request_access_enabled"`
+	MergeMethod                               MergeMethodValue   `json:"merge_method"`
+	ForkedFromProject                         *ForkParent        `json:"forked_from_project"`
+	Mirror                                    bool               `json:"mirror"`
+	MirrorUserID                              int                `json:"mirror_user_id"`
+	MirrorTriggerBuilds                       bool               `json:"mirror_trigger_builds"`
+	OnlyMirrorProtectedBranches               bool               `json:"only_mirror_protected_branches"`
+	MirrorOverwritesDivergedBranches          bool               `json:"mirror_overwrites_diverged_branches"`
+	PackagesEnabled                           bool               `json:"packages_enabled"`
+	ServiceDeskEnabled                        bool               `json:"service_desk_enabled"`
+	ServiceDeskAddress                        string             `json:"service_desk_address"`
+	IssuesAccessLevel                         AccessControlValue `json:"issues_access_level"`
+	ReleasesAccessLevel                       AccessControlValue `json:"releases_access_level,omitempty"`
+	RepositoryAccessLevel                     AccessControlValue `json:"repository_access_level"`
+	MergeRequestsAccessLevel                  AccessControlValue `json:"merge_requests_access_level"`
+	ForkingAccessLevel                        AccessControlValue `json:"forking_access_level"`
+	WikiAccessLevel                           AccessControlValue `json:"wiki_access_level"`
+	BuildsAccessLevel                         AccessControlValue `json:"builds_access_level"`
+	SnippetsAccessLevel                       AccessControlValue `json:"snippets_access_level"`
+	PagesAccessLevel                          AccessControlValue `json:"pages_access_level"`
+	OperationsAccessLevel                     AccessControlValue `json:"operations_access_level"`
+	AnalyticsAccessLevel                      AccessControlValue `json:"analytics_access_level"`
+	AutocloseReferencedIssues                 bool               `json:"autoclose_referenced_issues"`
+	SuggestionCommitMessage                   string             `json:"suggestion_commit_message"`
+	AutoCancelPendingPipelines                string             `json:"auto_cancel_pending_pipelines"`
+	CIForwardDeploymentEnabled                bool               `json:"ci_forward_deployment_enabled"`
+	SquashOption                              SquashOptionValue  `json:"squash_option"`
+	EnforceAuthChecksOnUploads                bool               `json:"enforce_auth_checks_on_uploads,omitempty"`
 	SharedWithGroups                          []struct {
 		GroupID          int    `json:"group_id"`
 		GroupName        string `json:"group_name"`
@@ -148,8 +150,10 @@ type Project struct {
 	EmailsDisabled                           bool               `json:"emails_disabled"`
 	ExternalAuthorizationClassificationLabel string             `json:"external_authorization_classification_label"`
 	RequirementsAccessLevel                  AccessControlValue `json:"requirements_access_level"`
-	SecurityAndComplianceAccessLevel         AccessControlValue `json:"security_and_compliance_access_level"`
-	MergeRequestDefaultTargetSelf            bool               `json:"mr_default_target_self"`
+	// `compliance`是`合规`的意思，
+	// `安全和合规` 指监控仓库的安全扫描，如漏洞、依赖、合规、配置等信息的扫描
+	SecurityAndComplianceAccessLevel AccessControlValue `json:"security_and_compliance_access_level"`
+	MergeRequestDefaultTargetSelf    bool               `json:"mr_default_target_self"`
 
 	// Deprecated: This parameter has been renamed to PublicJobs in GitLab 9.0.
 	PublicBuilds bool `json:"public_builds"`
@@ -190,7 +194,8 @@ type ForkParent struct {
 
 // GroupAccess represents group access.
 type GroupAccess struct {
-	AccessLevel       AccessLevelValue       `json:"access_level"`
+	AccessLevel AccessLevelValue `json:"access_level"`
+	// 通知级别值
 	NotificationLevel NotificationLevelValue `json:"notification_level"`
 }
 
@@ -299,45 +304,57 @@ func (s ProjectApprovalRule) String() string {
 // ListProjectsOptions represents the available ListProjects() options.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
+// ListProjectsOptions 类 是`查询`的相关设置，不是返回的仓库列表的结果。
 type ListProjectsOptions struct {
+	// 分页配置，即 gitlab.ListOptions
 	ListOptions
-	Archived                 *bool             `url:"archived,omitempty" json:"archived,omitempty"`
-	IDAfter                  *int              `url:"id_after,omitempty" json:"id_after,omitempty"`
-	IDBefore                 *int              `url:"id_before,omitempty" json:"id_before,omitempty"`
-	LastActivityAfter        *time.Time        `url:"last_activity_after,omitempty" json:"last_activity_after,omitempty"`
-	LastActivityBefore       *time.Time        `url:"last_activity_before,omitempty" json:"last_activity_before,omitempty"`
-	Membership               *bool             `url:"membership,omitempty" json:"membership,omitempty"`
-	MinAccessLevel           *AccessLevelValue `url:"min_access_level,omitempty" json:"min_access_level,omitempty"`
-	OrderBy                  *string           `url:"order_by,omitempty" json:"order_by,omitempty"`
-	Owned                    *bool             `url:"owned,omitempty" json:"owned,omitempty"`
-	RepositoryChecksumFailed *bool             `url:"repository_checksum_failed,omitempty" json:"repository_checksum_failed,omitempty"`
-	RepositoryStorage        *string           `url:"repository_storage,omitempty" json:"repository_storage,omitempty"`
-	Search                   *string           `url:"search,omitempty" json:"search,omitempty"`
-	SearchNamespaces         *bool             `url:"search_namespaces,omitempty" json:"search_namespaces,omitempty"`
-	Simple                   *bool             `url:"simple,omitempty" json:"simple,omitempty"`
-	Sort                     *string           `url:"sort,omitempty" json:"sort,omitempty"`
-	Starred                  *bool             `url:"starred,omitempty" json:"starred,omitempty"`
-	Statistics               *bool             `url:"statistics,omitempty" json:"statistics,omitempty"`
-	Topic                    *string           `url:"topic,omitempty" json:"topic,omitempty"`
-	Visibility               *VisibilityValue  `url:"visibility,omitempty" json:"visibility,omitempty"`
-	WikiChecksumFailed       *bool             `url:"wiki_checksum_failed,omitempty" json:"wiki_checksum_failed,omitempty"`
-	WithCustomAttributes     *bool             `url:"with_custom_attributes,omitempty" json:"with_custom_attributes,omitempty"`
-	WithIssuesEnabled        *bool             `url:"with_issues_enabled,omitempty" json:"with_issues_enabled,omitempty"`
-	WithMergeRequestsEnabled *bool             `url:"with_merge_requests_enabled,omitempty" json:"with_merge_requests_enabled,omitempty"`
-	WithProgrammingLanguage  *string           `url:"with_programming_language,omitempty" json:"with_programming_language,omitempty"`
+	// `Archived`是`存档`的意思，受存档状态限制
+	Archived *bool `url:"archived,omitempty" json:"archived,omitempty"`
+	// 限定仓库id 在多少之后
+	IDAfter *int `url:"id_after,omitempty" json:"id_after,omitempty"`
+	// 限定仓库id 在多少之前
+	IDBefore *int `url:"id_before,omitempty" json:"id_before,omitempty"`
+	// 最后有活动的项目  最后活动时间 之后
+	LastActivityAfter *time.Time `url:"last_activity_after,omitempty" json:"last_activity_after,omitempty"`
+	// 最后有活动的项目  最后活动时间 之前
+	LastActivityBefore *time.Time `url:"last_activity_before,omitempty" json:"last_activity_before,omitempty"`
+	// ?看是不是协作成员
+	Membership     *bool             `url:"membership,omitempty" json:"membership,omitempty"`
+	MinAccessLevel *AccessLevelValue `url:"min_access_level,omitempty" json:"min_access_level,omitempty"`
+	// 要根据什么进行排序，参考如下：
+	// 返回按id、name、path、created_at、updated_at、last_activity_at或similarity字段排序的项目。repository_size、storage_size或字段仅允许管理员使用packages_size。（在 GitLab 14.1 中引入）仅在搜索时可用，并且仅限于当前用户所属的项目。默认为。wiki_sizesimilaritycreated_at
+	OrderBy *string `url:"order_by,omitempty" json:"order_by,omitempty"`
+	// ?看是不是属组
+	Owned *bool `url:"owned,omitempty" json:"owned,omitempty"`
+
+	RepositoryChecksumFailed *bool            `url:"repository_checksum_failed,omitempty" json:"repository_checksum_failed,omitempty"`
+	RepositoryStorage        *string          `url:"repository_storage,omitempty" json:"repository_storage,omitempty"`
+	Search                   *string          `url:"search,omitempty" json:"search,omitempty"`
+	SearchNamespaces         *bool            `url:"search_namespaces,omitempty" json:"search_namespaces,omitempty"`
+	Simple                   *bool            `url:"simple,omitempty" json:"simple,omitempty"`
+	Sort                     *string          `url:"sort,omitempty" json:"sort,omitempty"`
+	Starred                  *bool            `url:"starred,omitempty" json:"starred,omitempty"`
+	Statistics               *bool            `url:"statistics,omitempty" json:"statistics,omitempty"`
+	Topic                    *string          `url:"topic,omitempty" json:"topic,omitempty"`
+	Visibility               *VisibilityValue `url:"visibility,omitempty" json:"visibility,omitempty"`
+	WikiChecksumFailed       *bool            `url:"wiki_checksum_failed,omitempty" json:"wiki_checksum_failed,omitempty"`
+	WithCustomAttributes     *bool            `url:"with_custom_attributes,omitempty" json:"with_custom_attributes,omitempty"`
+	WithIssuesEnabled        *bool            `url:"with_issues_enabled,omitempty" json:"with_issues_enabled,omitempty"`
+	WithMergeRequestsEnabled *bool            `url:"with_merge_requests_enabled,omitempty" json:"with_merge_requests_enabled,omitempty"`
+	WithProgrammingLanguage  *string          `url:"with_programming_language,omitempty" json:"with_programming_language,omitempty"`
 }
 
 // ListProjects gets a list of projects accessible by the authenticated user.
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html#list-all-projects
 func (s *ProjectsService) ListProjects(opt *ListProjectsOptions, options ...RequestOptionFunc) ([]*Project, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "projects", opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, "projects", opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*Project
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -356,13 +373,13 @@ func (s *ProjectsService) ListUserProjects(uid interface{}, opt *ListProjectsOpt
 	}
 	u := fmt.Sprintf("users/%s/projects", user)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*Project
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -381,13 +398,13 @@ func (s *ProjectsService) ListUserStarredProjects(uid interface{}, opt *ListProj
 	}
 	u := fmt.Sprintf("users/%s/starred_projects", user)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*Project
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -424,13 +441,13 @@ func (s *ProjectsService) ListProjectsUsers(pid interface{}, opt *ListProjectUse
 	}
 	u := fmt.Sprintf("projects/%s/users", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*ProjectUser
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -471,13 +488,13 @@ func (s *ProjectsService) ListProjectsGroups(pid interface{}, opt *ListProjectGr
 	}
 	u := fmt.Sprintf("projects/%s/groups", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*ProjectGroup
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -500,13 +517,13 @@ func (s *ProjectsService) GetProjectLanguages(pid interface{}, options ...Reques
 	}
 	u := fmt.Sprintf("projects/%s/languages", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(ProjectLanguages)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -535,13 +552,13 @@ func (s *ProjectsService) GetProject(pid interface{}, opt *GetProjectOptions, op
 	}
 	u := fmt.Sprintf("projects/%s", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -596,13 +613,13 @@ func (s *ProjectsService) GetProjectEvents(pid interface{}, opt *GetProjectEvent
 	}
 	u := fmt.Sprintf("projects/%s/events", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*ProjectEvent
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -750,9 +767,9 @@ func (s *ProjectsService) CreateProject(opt *CreateProjectOptions, options ...Re
 	var req *retryablehttp.Request
 
 	if opt.Avatar == nil {
-		req, err = s.client.NewRequest(http.MethodPost, "projects", opt, options)
+		req, err = s.Client.NewRequest(http.MethodPost, "projects", opt, options)
 	} else {
-		req, err = s.client.UploadRequest(
+		req, err = s.Client.UploadRequest(
 			http.MethodPost,
 			"projects",
 			opt.Avatar.Image,
@@ -767,7 +784,7 @@ func (s *ProjectsService) CreateProject(opt *CreateProjectOptions, options ...Re
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -800,9 +817,9 @@ func (s *ProjectsService) CreateProjectForUser(user int, opt *CreateProjectForUs
 	u := fmt.Sprintf("projects/user/%d", user)
 
 	if opt.Avatar == nil {
-		req, err = s.client.NewRequest(http.MethodPost, u, opt, options)
+		req, err = s.Client.NewRequest(http.MethodPost, u, opt, options)
 	} else {
-		req, err = s.client.UploadRequest(
+		req, err = s.Client.UploadRequest(
 			http.MethodPost,
 			u,
 			opt.Avatar.Image,
@@ -817,7 +834,7 @@ func (s *ProjectsService) CreateProjectForUser(user int, opt *CreateProjectForUs
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -935,9 +952,9 @@ func (s *ProjectsService) EditProject(pid interface{}, opt *EditProjectOptions, 
 	var req *retryablehttp.Request
 
 	if opt.Avatar == nil || (opt.Avatar.Filename == "" && opt.Avatar.Image == nil) {
-		req, err = s.client.NewRequest(http.MethodPut, u, opt, options)
+		req, err = s.Client.NewRequest(http.MethodPut, u, opt, options)
 	} else {
-		req, err = s.client.UploadRequest(
+		req, err = s.Client.UploadRequest(
 			http.MethodPut,
 			u,
 			opt.Avatar.Image,
@@ -952,7 +969,7 @@ func (s *ProjectsService) EditProject(pid interface{}, opt *EditProjectOptions, 
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -987,13 +1004,13 @@ func (s *ProjectsService) ForkProject(pid interface{}, opt *ForkProjectOptions, 
 	}
 	u := fmt.Sprintf("projects/%s/fork", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1012,13 +1029,13 @@ func (s *ProjectsService) StarProject(pid interface{}, options ...RequestOptionF
 	}
 	u := fmt.Sprintf("projects/%s/star", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1037,13 +1054,13 @@ func (s *ProjectsService) UnstarProject(pid interface{}, options ...RequestOptio
 	}
 	u := fmt.Sprintf("projects/%s/unstar", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1063,13 +1080,13 @@ func (s *ProjectsService) ArchiveProject(pid interface{}, options ...RequestOpti
 	}
 	u := fmt.Sprintf("projects/%s/archive", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1089,13 +1106,13 @@ func (s *ProjectsService) UnarchiveProject(pid interface{}, options ...RequestOp
 	}
 	u := fmt.Sprintf("projects/%s/unarchive", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1114,12 +1131,12 @@ func (s *ProjectsService) DeleteProject(pid interface{}, options ...RequestOptio
 	}
 	u := fmt.Sprintf("projects/%s", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ShareWithGroupOptions represents options to share project with groups
@@ -1141,12 +1158,12 @@ func (s *ProjectsService) ShareProjectWithGroup(pid interface{}, opt *ShareWithG
 	}
 	u := fmt.Sprintf("projects/%s/share", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // DeleteSharedProjectFromGroup allows to unshare a project from a group.
@@ -1159,12 +1176,12 @@ func (s *ProjectsService) DeleteSharedProjectFromGroup(pid interface{}, groupID 
 	}
 	u := fmt.Sprintf("projects/%s/share/%d", PathEscape(project), groupID)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ProjectMember represents a project member.
@@ -1225,13 +1242,13 @@ func (s *ProjectsService) ListProjectHooks(pid interface{}, opt *ListProjectHook
 	}
 	u := fmt.Sprintf("projects/%s/hooks", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var ph []*ProjectHook
-	resp, err := s.client.Do(req, &ph)
+	resp, err := s.Client.Do(req, &ph)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1250,13 +1267,13 @@ func (s *ProjectsService) GetProjectHook(pid interface{}, hook int, options ...R
 	}
 	u := fmt.Sprintf("projects/%s/hooks/%d", PathEscape(project), hook)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ph := new(ProjectHook)
-	resp, err := s.client.Do(req, ph)
+	resp, err := s.Client.Do(req, ph)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1298,13 +1315,13 @@ func (s *ProjectsService) AddProjectHook(pid interface{}, opt *AddProjectHookOpt
 	}
 	u := fmt.Sprintf("projects/%s/hooks", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ph := new(ProjectHook)
-	resp, err := s.client.Do(req, ph)
+	resp, err := s.Client.Do(req, ph)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1346,13 +1363,13 @@ func (s *ProjectsService) EditProjectHook(pid interface{}, hook int, opt *EditPr
 	}
 	u := fmt.Sprintf("projects/%s/hooks/%d", PathEscape(project), hook)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ph := new(ProjectHook)
-	resp, err := s.client.Do(req, ph)
+	resp, err := s.Client.Do(req, ph)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1372,12 +1389,12 @@ func (s *ProjectsService) DeleteProjectHook(pid interface{}, hook int, options .
 	}
 	u := fmt.Sprintf("projects/%s/hooks/%d", PathEscape(project), hook)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ProjectForkRelation represents a project fork relationship.
@@ -1404,13 +1421,13 @@ func (s *ProjectsService) CreateProjectForkRelation(pid interface{}, fork int, o
 	}
 	u := fmt.Sprintf("projects/%s/fork/%d", PathEscape(project), fork)
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pfr := new(ProjectForkRelation)
-	resp, err := s.client.Do(req, pfr)
+	resp, err := s.Client.Do(req, pfr)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1429,12 +1446,12 @@ func (s *ProjectsService) DeleteProjectForkRelation(pid interface{}, options ...
 	}
 	u := fmt.Sprintf("projects/%s/fork", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ProjectFile represents an uploaded project file.
@@ -1456,7 +1473,7 @@ func (s *ProjectsService) UploadFile(pid interface{}, content io.Reader, filenam
 	}
 	u := fmt.Sprintf("projects/%s/uploads", PathEscape(project))
 
-	req, err := s.client.UploadRequest(
+	req, err := s.Client.UploadRequest(
 		http.MethodPost,
 		u,
 		content,
@@ -1470,7 +1487,7 @@ func (s *ProjectsService) UploadFile(pid interface{}, content io.Reader, filenam
 	}
 
 	pf := new(ProjectFile)
-	resp, err := s.client.Do(req, pf)
+	resp, err := s.Client.Do(req, pf)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1489,7 +1506,7 @@ func (s *ProjectsService) UploadAvatar(pid interface{}, avatar io.Reader, filena
 	}
 	u := fmt.Sprintf("projects/%s", PathEscape(project))
 
-	req, err := s.client.UploadRequest(
+	req, err := s.Client.UploadRequest(
 		http.MethodPut,
 		u,
 		avatar,
@@ -1503,7 +1520,7 @@ func (s *ProjectsService) UploadAvatar(pid interface{}, avatar io.Reader, filena
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1522,13 +1539,13 @@ func (s *ProjectsService) ListProjectForks(pid interface{}, opt *ListProjectsOpt
 	}
 	u := fmt.Sprintf("projects/%s/forks", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var forks []*Project
-	resp, err := s.client.Do(req, &forks)
+	resp, err := s.Client.Do(req, &forks)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1540,8 +1557,11 @@ func (s *ProjectsService) ListProjectForks(pid interface{}, opt *ListProjectsOpt
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/projects.html#push-rules
+// 项目的规则
 type ProjectPushRules struct {
-	ID                         int        `json:"id"`
+	// 这个 ID 没用
+	ID int `json:"id"`
+	// 这个ProjectID 有用，简称pid，我们经常使用它
 	ProjectID                  int        `json:"project_id"`
 	CommitMessageRegex         string     `json:"commit_message_regex"`
 	CommitMessageNegativeRegex string     `json:"commit_message_negative_regex"`
@@ -1554,7 +1574,8 @@ type ProjectPushRules struct {
 	FileNameRegex              string     `json:"file_name_regex"`
 	MaxFileSize                int        `json:"max_file_size"`
 	CommitCommitterCheck       bool       `json:"commit_committer_check"`
-	RejectUnsignedCommits      bool       `json:"reject_unsigned_commits"`
+	// 检查是否准许未签名的提交
+	RejectUnsignedCommits bool `json:"reject_unsigned_commits"`
 }
 
 // GetProjectPushRules gets the push rules of a project.
@@ -1568,13 +1589,13 @@ func (s *ProjectsService) GetProjectPushRules(pid interface{}, options ...Reques
 	}
 	u := fmt.Sprintf("projects/%s/push_rule", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ppr := new(ProjectPushRules)
-	resp, err := s.client.Do(req, ppr)
+	resp, err := s.Client.Do(req, ppr)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1612,13 +1633,13 @@ func (s *ProjectsService) AddProjectPushRule(pid interface{}, opt *AddProjectPus
 	}
 	u := fmt.Sprintf("projects/%s/push_rule", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ppr := new(ProjectPushRules)
-	resp, err := s.client.Do(req, ppr)
+	resp, err := s.Client.Do(req, ppr)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1656,13 +1677,13 @@ func (s *ProjectsService) EditProjectPushRule(pid interface{}, opt *EditProjectP
 	}
 	u := fmt.Sprintf("projects/%s/push_rule", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ppr := new(ProjectPushRules)
-	resp, err := s.client.Do(req, ppr)
+	resp, err := s.Client.Do(req, ppr)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1683,12 +1704,12 @@ func (s *ProjectsService) DeleteProjectPushRule(pid interface{}, options ...Requ
 	}
 	u := fmt.Sprintf("projects/%s/push_rule", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ProjectApprovals represents GitLab project level merge request approvals.
@@ -1718,13 +1739,13 @@ func (s *ProjectsService) GetApprovalConfiguration(pid interface{}, options ...R
 	}
 	u := fmt.Sprintf("projects/%s/approvals", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pa := new(ProjectApprovals)
-	resp, err := s.client.Do(req, pa)
+	resp, err := s.Client.Do(req, pa)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1758,13 +1779,13 @@ func (s *ProjectsService) ChangeApprovalConfiguration(pid interface{}, opt *Chan
 	}
 	u := fmt.Sprintf("projects/%s/approvals", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pa := new(ProjectApprovals)
-	resp, err := s.client.Do(req, pa)
+	resp, err := s.Client.Do(req, pa)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1788,13 +1809,13 @@ func (s *ProjectsService) GetProjectApprovalRules(pid interface{}, opt *GetProje
 	}
 	u := fmt.Sprintf("projects/%s/approval_rules", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var par []*ProjectApprovalRule
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1813,13 +1834,13 @@ func (s *ProjectsService) GetProjectApprovalRule(pid interface{}, ruleID int, op
 	}
 	u := fmt.Sprintf("projects/%s/approval_rules/%d", PathEscape(project), ruleID)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	par := new(ProjectApprovalRule)
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1853,13 +1874,13 @@ func (s *ProjectsService) CreateProjectApprovalRule(pid interface{}, opt *Create
 	}
 	u := fmt.Sprintf("projects/%s/approval_rules", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	par := new(ProjectApprovalRule)
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1892,13 +1913,13 @@ func (s *ProjectsService) UpdateProjectApprovalRule(pid interface{}, approvalRul
 	}
 	u := fmt.Sprintf("projects/%s/approval_rules/%d", PathEscape(project), approvalRule)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	par := new(ProjectApprovalRule)
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1917,12 +1938,12 @@ func (s *ProjectsService) DeleteProjectApprovalRule(pid interface{}, approvalRul
 	}
 	u := fmt.Sprintf("projects/%s/approval_rules/%d", PathEscape(project), approvalRule)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ChangeAllowedApproversOptions represents the available ChangeAllowedApprovers()
@@ -1946,13 +1967,13 @@ func (s *ProjectsService) ChangeAllowedApprovers(pid interface{}, opt *ChangeAll
 	}
 	u := fmt.Sprintf("projects/%s/approvers", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pa := new(ProjectApprovals)
-	resp, err := s.client.Do(req, pa)
+	resp, err := s.Client.Do(req, pa)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -1986,13 +2007,13 @@ func (s *ProjectsService) GetProjectPullMirrorDetails(pid interface{}, options .
 	}
 	u := fmt.Sprintf("projects/%s/mirror/pull", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pmd := new(ProjectPullMirrorDetails)
-	resp, err := s.client.Do(req, pmd)
+	resp, err := s.Client.Do(req, pmd)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -2011,12 +2032,12 @@ func (s *ProjectsService) StartMirroringProject(pid interface{}, options ...Requ
 	}
 	u := fmt.Sprintf("projects/%s/mirror/pull", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := s.client.Do(req, nil)
+	resp, err := s.Client.Do(req, nil)
 	if err != nil {
 		return resp, err
 	}
@@ -2041,13 +2062,13 @@ func (s *ProjectsService) TransferProject(pid interface{}, opt *TransferProjectO
 	}
 	u := fmt.Sprintf("projects/%s/transfer", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(Project)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -2066,12 +2087,12 @@ func (s *ProjectsService) StartHousekeepingProject(pid interface{}, options ...R
 	}
 	u := fmt.Sprintf("projects/%s/housekeeping", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // GetRepositoryStorage Get the path to repository storage.
@@ -2092,13 +2113,13 @@ func (s *ProjectsService) GetRepositoryStorage(pid interface{}, options ...Reque
 	}
 	u := fmt.Sprintf("projects/%s/storage", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	prs := new(ProjectReposityStorage)
-	resp, err := s.client.Do(req, prs)
+	resp, err := s.Client.Do(req, prs)
 	if err != nil {
 		return nil, resp, err
 	}
