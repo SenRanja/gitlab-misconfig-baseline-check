@@ -6,14 +6,36 @@ import (
 )
 
 // 列出全部project
-func ListAllProjects(gitlabClient *gitlab.Client) ([]*gitlab.Project, *gitlab.ProjectsService) {
+func ListAllProjects(gitlabClient *gitlab.Client, per_page_items, max_acquire_items int) ([]*gitlab.Project, *gitlab.ProjectsService) {
+
+	var opt gitlab.ListOptions
+	var listProjectsOptions *gitlab.ListProjectsOptions
+	var projects []*gitlab.Project
+	i := 1
+	for {
+		opt = gitlab.ListOptions{
+			Page:    i,
+			PerPage: per_page_items,
+		}
+		i++
+		listProjectsOptions = &gitlab.ListProjectsOptions{
+			ListOptions: opt,
+		}
+		projects_tmp, _, err := gitlabClient.Projects.ListProjects(listProjectsOptions)
+		if err != nil {
+			fmt.Println(err)
+		}
+		projects = append(projects, projects_tmp...)
+
+		if len(projects_tmp) < per_page_items || len(projects) > max_acquire_items {
+			break
+		}
+	}
+
 	projectsService := gitlab.ProjectsService{
 		Client: gitlabClient,
 	}
-	projects, _, err := gitlabClient.Projects.ListProjects(listProjectsOptions)
-	if err != nil {
-		fmt.Println(err)
-	}
+
 	return projects, &projectsService
 }
 

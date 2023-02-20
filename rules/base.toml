@@ -1,6 +1,14 @@
 title = "gitlab-misconfig config"
 
+# project
 [projects]
+[projects.per_page_items]
+description = '分页请求处理，获取项目的单次请求数量'
+keywords = 2000
+[projects.max_acquire_items]
+description = '获取近期日志的最大条目数'
+keywords = 500000
+
 [projects.project.project_visibility]
 description= '项目可见性'
 keywords= 'internal'
@@ -69,7 +77,7 @@ keywords= 'False'
 description= 'project runners notshared'
 keywords= 'True'
 
-
+# user
 [users]
 [users.admin.admin_max_numbers]
 description= '要求gitlab管理员数量不要超过1个'
@@ -78,3 +86,19 @@ keywords= 1
 [users.auditor.auditor_max_numbers ]
 description = '要求至少设置一名审计人员'
 keywords = 1
+
+[users.users.unactive_time]
+description = '不登录多少天数，则视为不活跃用户'
+keywords = 180
+
+# audit
+[audit_events]
+[audit_events.per_page_items]
+description = '分页请求处理，获取日志时的单次请求数量'
+keywords = 2000
+[audit_events.time]
+description = '获取近期日志的天数'
+keywords = 180
+[audit_events.items]
+description = '获取近期日志的最大条目数'
+keywords = 500000

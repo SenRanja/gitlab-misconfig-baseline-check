@@ -6,7 +6,6 @@ import (
 	"gitlab-misconfig/bindata"
 	"gitlab-misconfig/internal/analyzer"
 	"gitlab-misconfig/internal/analyzer/project"
-	"gitlab-misconfig/internal/analyzer/user"
 	"gitlab-misconfig/internal/gitlab"
 	"gitlab-misconfig/internal/log"
 	"gitlab-misconfig/internal/types"
@@ -16,29 +15,25 @@ type Engine struct {
 	Analyzers []analyzer.Analyzer
 }
 
-//var (
-//	vc       config.ViperConfig
-//	}
-
-func NewEngine() Engine {
-	return Engine{
+func NewEngine() *Engine {
+	return &Engine{
 		Analyzers: []analyzer.Analyzer{
-			user.New(),
-			project.New(),
+			//user.New(),
+			//project.New(),
+			new(project.Analyzer),
+			//audit_event.New(),
+			//settings.New(),
 		},
 	}
 }
 
-func (e Engine) Analysis(gitlabClient *gitlab.Client, options *types.Options) {
+func (e *Engine) Analysis(gitlabClient *gitlab.Client, options *types.Options) {
 	// 加载规则
 	config := initConfig(options.RulePath)
 	// 扫描逻辑
-
 	for _, analyzer := range e.Analyzers {
-		//analyzer.Init(gitlabClient, options)
 		analyzer.AutoAnalysis(gitlabClient, options, config)
 	}
-
 }
 
 func initConfig(rulePath string) *viper.Viper {

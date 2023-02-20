@@ -39,25 +39,35 @@ type ProjectsService struct {
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html
 // Project类 是查询仓库后，仓库返回的结果的解析
 type Project struct {
-	ID                             int                        `json:"id"`
-	Description                    string                     `json:"description"`
-	DefaultBranch                  string                     `json:"default_branch"`
-	Public                         bool                       `json:"public"`
-	Visibility                     VisibilityValue            `json:"visibility"`
-	SSHURLToRepo                   string                     `json:"ssh_url_to_repo"`
-	HTTPURLToRepo                  string                     `json:"http_url_to_repo"`
-	WebURL                         string                     `json:"web_url"`
-	ReadmeURL                      string                     `json:"readme_url"`
-	TagList                        []string                   `json:"tag_list"`
-	Topics                         []string                   `json:"topics"`
-	Owner                          *User                      `json:"owner"`
-	Name                           string                     `json:"name"`
-	NameWithNamespace              string                     `json:"name_with_namespace"`
-	Path                           string                     `json:"path"`
-	PathWithNamespace              string                     `json:"path_with_namespace"`
-	IssuesEnabled                  bool                       `json:"issues_enabled"`
-	OpenIssuesCount                int                        `json:"open_issues_count"`
-	MergeRequestsEnabled           bool                       `json:"merge_requests_enabled"`
+	ID            int    `json:"id"`
+	Description   string `json:"description"`
+	DefaultBranch string `json:"default_branch"`
+	Public        bool   `json:"public"`
+	// 项目本身的可见受限
+	Visibility VisibilityValue `json:"visibility"`
+	// ssh .git 的url
+	SSHURLToRepo string `json:"ssh_url_to_repo"`
+	// http .git 的url
+	HTTPURLToRepo string `json:"http_url_to_repo"`
+	// WEB访问的url
+	WebURL    string   `json:"web_url"`
+	ReadmeURL string   `json:"readme_url"`
+	TagList   []string `json:"tag_list"`
+	Topics    []string `json:"topics"`
+	// 属主
+	Owner *User `json:"owner"`
+	// 项目名，如 pomParser
+	Name string `json:"name"`
+	// 带开发者的项目名，如 SenRanja/pomparser
+	NameWithNamespace string `json:"name_with_namespace"`
+	// 小写的项目名，如 pomparser
+	Path              string `json:"path"`
+	PathWithNamespace string `json:"path_with_namespace"`
+	IssuesEnabled     bool   `json:"issues_enabled"`
+	OpenIssuesCount   int    `json:"open_issues_count"`
+	// 【官方称该项已废除，替代为merge_requests_access_level】受启用的合并请求功能限制
+	MergeRequestsEnabled bool `json:"merge_requests_enabled"`
+	// 合并前是否需要批准
 	ApprovalsBeforeMerge           int                        `json:"approvals_before_merge"`
 	JobsEnabled                    bool                       `json:"jobs_enabled"`
 	WikiEnabled                    bool                       `json:"wiki_enabled"`
@@ -70,9 +80,11 @@ type Project struct {
 	CreatedAt                      *time.Time                 `json:"created_at,omitempty"`
 	LastActivityAt                 *time.Time                 `json:"last_activity_at,omitempty"`
 	CreatorID                      int                        `json:"creator_id"`
-	Namespace                      *ProjectNamespace          `json:"namespace"`
-	ImportStatus                   string                     `json:"import_status"`
-	ImportError                    string                     `json:"import_error"`
+	// 这个决定了是谁写的这个project
+	// "kind"分为 "group" 和 "user"
+	Namespace    *ProjectNamespace `json:"namespace"`
+	ImportStatus string            `json:"import_status"`
+	ImportError  string            `json:"import_error"`
 	// `Permissions` 是ACL，对`用户(`项目本身权限`)`和 对`组`的访问权限
 	Permissions                               *Permissions       `json:"permissions"`
 	MarkedForDeletionAt                       *ISOTime           `json:"marked_for_deletion_at"`
@@ -107,54 +119,71 @@ type Project struct {
 	IssuesAccessLevel                         AccessControlValue `json:"issues_access_level"`
 	ReleasesAccessLevel                       AccessControlValue `json:"releases_access_level,omitempty"`
 	RepositoryAccessLevel                     AccessControlValue `json:"repository_access_level"`
-	MergeRequestsAccessLevel                  AccessControlValue `json:"merge_requests_access_level"`
-	ForkingAccessLevel                        AccessControlValue `json:"forking_access_level"`
-	WikiAccessLevel                           AccessControlValue `json:"wiki_access_level"`
-	BuildsAccessLevel                         AccessControlValue `json:"builds_access_level"`
-	SnippetsAccessLevel                       AccessControlValue `json:"snippets_access_level"`
-	PagesAccessLevel                          AccessControlValue `json:"pages_access_level"`
-	OperationsAccessLevel                     AccessControlValue `json:"operations_access_level"`
-	AnalyticsAccessLevel                      AccessControlValue `json:"analytics_access_level"`
-	AutocloseReferencedIssues                 bool               `json:"autoclose_referenced_issues"`
-	SuggestionCommitMessage                   string             `json:"suggestion_commit_message"`
-	AutoCancelPendingPipelines                string             `json:"auto_cancel_pending_pipelines"`
-	CIForwardDeploymentEnabled                bool               `json:"ci_forward_deployment_enabled"`
-	SquashOption                              SquashOptionValue  `json:"squash_option"`
-	EnforceAuthChecksOnUploads                bool               `json:"enforce_auth_checks_on_uploads,omitempty"`
-	SharedWithGroups                          []struct {
+	// 合并请求权限
+	MergeRequestsAccessLevel AccessControlValue `json:"merge_requests_access_level"`
+	ForkingAccessLevel       AccessControlValue `json:"forking_access_level"`
+	WikiAccessLevel          AccessControlValue `json:"wiki_access_level"`
+	BuildsAccessLevel        AccessControlValue `json:"builds_access_level"`
+	SnippetsAccessLevel      AccessControlValue `json:"snippets_access_level"`
+	// 页面访问权限
+	PagesAccessLevel      AccessControlValue `json:"pages_access_level"`
+	OperationsAccessLevel AccessControlValue `json:"operations_access_level"`
+	AnalyticsAccessLevel  AccessControlValue `json:"analytics_access_level"`
+	// 自动关闭参考问题
+	AutocloseReferencedIssues bool `json:"autoclose_referenced_issues"`
+	// 展示commit信息
+	SuggestionCommitMessage string `json:"suggestion_commit_message"`
+	// 自动取消挂起管道
+	AutoCancelPendingPipelines string `json:"auto_cancel_pending_pipelines"`
+	// 启用CI正向部署
+	CIForwardDeploymentEnabled bool `json:"ci_forward_deployment_enabled"`
+	// 壁球选项
+	SquashOption SquashOptionValue `json:"squash_option"`
+	// 对上传执行授权检查
+	EnforceAuthChecksOnUploads bool `json:"enforce_auth_checks_on_uploads,omitempty"`
+	// 和其他组共享
+	SharedWithGroups []struct {
 		GroupID          int    `json:"group_id"`
 		GroupName        string `json:"group_name"`
 		GroupFullPath    string `json:"group_full_path"`
 		GroupAccessLevel int    `json:"group_access_level"`
 	} `json:"shared_with_groups"`
-	Statistics                               *Statistics        `json:"statistics"`
-	Links                                    *Links             `json:"_links,omitempty"`
-	CIConfigPath                             string             `json:"ci_config_path"`
-	CIDefaultGitDepth                        int                `json:"ci_default_git_depth"`
-	CISeperateCache                          bool               `json:"ci_separated_caches"`
-	CustomAttributes                         []*CustomAttribute `json:"custom_attributes"`
-	ComplianceFrameworks                     []string           `json:"compliance_frameworks"`
-	BuildCoverageRegex                       string             `json:"build_coverage_regex"`
-	BuildTimeout                             int                `json:"build_timeout"`
-	IssuesTemplate                           string             `json:"issues_template"`
-	MergeRequestsTemplate                    string             `json:"merge_requests_template"`
-	KeepLatestArtifact                       bool               `json:"keep_latest_artifact"`
-	MergePipelinesEnabled                    bool               `json:"merge_pipelines_enabled"`
-	MergeTrainsEnabled                       bool               `json:"merge_trains_enabled"`
-	RestrictUserDefinedVariables             bool               `json:"restrict_user_defined_variables"`
-	MergeCommitTemplate                      string             `json:"merge_commit_template"`
-	SquashCommitTemplate                     string             `json:"squash_commit_template"`
-	AutoDevopsDeployStrategy                 string             `json:"auto_devops_deploy_strategy"`
-	AutoDevopsEnabled                        bool               `json:"auto_devops_enabled"`
-	BuildGitStrategy                         string             `json:"build_git_strategy"`
-	EmailsDisabled                           bool               `json:"emails_disabled"`
-	ExternalAuthorizationClassificationLabel string             `json:"external_authorization_classification_label"`
-	RequirementsAccessLevel                  AccessControlValue `json:"requirements_access_level"`
+	Statistics            *Statistics        `json:"statistics"`
+	Links                 *Links             `json:"_links,omitempty"`
+	CIConfigPath          string             `json:"ci_config_path"`
+	CIDefaultGitDepth     int                `json:"ci_default_git_depth"`
+	CISeperateCache       bool               `json:"ci_separated_caches"`
+	CustomAttributes      []*CustomAttribute `json:"custom_attributes"`
+	ComplianceFrameworks  []string           `json:"compliance_frameworks"`
+	BuildCoverageRegex    string             `json:"build_coverage_regex"`
+	BuildTimeout          int                `json:"build_timeout"`
+	IssuesTemplate        string             `json:"issues_template"`
+	MergeRequestsTemplate string             `json:"merge_requests_template"`
+	// 保持最新的工件
+	KeepLatestArtifact bool `json:"keep_latest_artifact"`
+	// 启用或禁用合并管道
+	MergePipelinesEnabled bool `json:"merge_pipelines_enabled"`
+	// 启用或禁用合并列车
+	MergeTrainsEnabled bool `json:"merge_trains_enabled"`
+	// 限制用户定义的变量
+	RestrictUserDefinedVariables bool   `json:"restrict_user_defined_variables"`
+	MergeCommitTemplate          string `json:"merge_commit_template"`
+	SquashCommitTemplate         string `json:"squash_commit_template"`
+	AutoDevopsDeployStrategy     string `json:"auto_devops_deploy_strategy"`
+	// 自动开启devops
+	AutoDevopsEnabled                        bool   `json:"auto_devops_enabled"`
+	BuildGitStrategy                         string `json:"build_git_strategy"`
+	EmailsDisabled                           bool   `json:"emails_disabled"`
+	ExternalAuthorizationClassificationLabel string `json:"external_authorization_classification_label"`
+	// 需求访问级别
+	RequirementsAccessLevel AccessControlValue `json:"requirements_access_level"`
 	// `compliance`是`合规`的意思，
 	// `安全和合规` 指监控仓库的安全扫描，如漏洞、依赖、合规、配置等信息的扫描
 	SecurityAndComplianceAccessLevel AccessControlValue `json:"security_and_compliance_access_level"`
-	MergeRequestDefaultTargetSelf    bool               `json:"mr_default_target_self"`
+	// 分叉项目-如果false将MR定位到上游项目，否则定位到自身。默认false
+	MergeRequestDefaultTargetSelf bool `json:"mr_default_target_self"`
 
+	// 【弃用】
 	// Deprecated: This parameter has been renamed to PublicJobs in GitLab 9.0.
 	PublicBuilds bool `json:"public_builds"`
 }
@@ -285,9 +314,10 @@ func (s Project) String() string {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/merge_request_approvals.html#get-project-level-rules
 type ProjectApprovalRule struct {
-	ID                            int                `json:"id"`
-	Name                          string             `json:"name"`
-	RuleType                      string             `json:"rule_type"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	RuleType string `json:"rule_type"`
+	// 有资格的批准者
 	EligibleApprovers             []*BasicUser       `json:"eligible_approvers"`
 	ApprovalsRequired             int                `json:"approvals_required"`
 	Users                         []*BasicUser       `json:"users"`
@@ -318,7 +348,7 @@ type ListProjectsOptions struct {
 	LastActivityAfter *time.Time `url:"last_activity_after,omitempty" json:"last_activity_after,omitempty"`
 	// 最后有活动的项目  最后活动时间 之前
 	LastActivityBefore *time.Time `url:"last_activity_before,omitempty" json:"last_activity_before,omitempty"`
-	// ?看是不是协作成员
+	// 协作成员
 	Membership     *bool             `url:"membership,omitempty" json:"membership,omitempty"`
 	MinAccessLevel *AccessLevelValue `url:"min_access_level,omitempty" json:"min_access_level,omitempty"`
 	// 要根据什么进行排序，参考如下：
@@ -1562,18 +1592,21 @@ type ProjectPushRules struct {
 	// 这个 ID 没用
 	ID int `json:"id"`
 	// 这个ProjectID 有用，简称pid，我们经常使用它
-	ProjectID                  int        `json:"project_id"`
-	CommitMessageRegex         string     `json:"commit_message_regex"`
-	CommitMessageNegativeRegex string     `json:"commit_message_negative_regex"`
-	BranchNameRegex            string     `json:"branch_name_regex"`
-	DenyDeleteTag              bool       `json:"deny_delete_tag"`
-	CreatedAt                  *time.Time `json:"created_at"`
-	MemberCheck                bool       `json:"member_check"`
-	PreventSecrets             bool       `json:"prevent_secrets"`
-	AuthorEmailRegex           string     `json:"author_email_regex"`
-	FileNameRegex              string     `json:"file_name_regex"`
-	MaxFileSize                int        `json:"max_file_size"`
-	CommitCommitterCheck       bool       `json:"commit_committer_check"`
+	ProjectID                  int    `json:"project_id"`
+	CommitMessageRegex         string `json:"commit_message_regex"`
+	CommitMessageNegativeRegex string `json:"commit_message_negative_regex"`
+	BranchNameRegex            string `json:"branch_name_regex"`
+	//拒绝删除
+	DenyDeleteTag bool       `json:"deny_delete_tag"`
+	CreatedAt     *time.Time `json:"created_at"`
+	//将作者（电子邮件）的提交限制为现有的 GitLab 用户。
+	MemberCheck      bool   `json:"member_check"`
+	PreventSecrets   bool   `json:"prevent_secrets"`
+	AuthorEmailRegex string `json:"author_email_regex"`
+	FileNameRegex    string `json:"file_name_regex"`
+	MaxFileSize      int    `json:"max_file_size"`
+	// 检查提交者是否经过验证
+	CommitCommitterCheck bool `json:"commit_committer_check"`
 	// 检查是否准许未签名的提交
 	RejectUnsignedCommits bool `json:"reject_unsigned_commits"`
 }

@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"gitlab-misconfig/internal/gitlab"
+	"time"
 )
 
 // 获取gitlab 所有用户信息
@@ -18,15 +19,20 @@ func getGitlabUsers(gitlabClient *gitlab.Client) ([]*gitlab.User, gitlab.UsersSe
 	return users, usersService
 }
 
-// 统计不活跃用户数量
-func countUnactiveNumbers(users []*gitlab.User) int {
-	var totalNumberOfAuditor = 0
-	for i := 0; i < len(users); i++ {
-		if users[i].IsAuditor {
-			totalNumberOfAuditor += 1
+// 不活跃用户数量
+func getUnactiveUsers(users []*gitlab.User, unactive_time int) []*gitlab.User {
+
+	// 设置多长时间不登陆，则视为 不活跃
+	noLoginTime := time.Now().AddDate(0, 0, -unactive_time)
+
+	var unActiveUsers []*gitlab.User
+	for _, user := range users {
+		if user.LastSignInAt == nil || user.LastSignInAt.Before(noLoginTime) {
+			unActiveUsers = append(unActiveUsers, user)
 		}
 	}
-	return totalNumberOfAuditor
+
+	return unActiveUsers
 }
 
 // 统计开启双因素认证用户数量

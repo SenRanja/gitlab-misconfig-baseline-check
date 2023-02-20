@@ -20,7 +20,7 @@ var detectionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		ParseOptions(options)
 		//fmt.Println("detection called")
-		gitlabClient := gitlabAuthClientInit()
+		gitlabClient := GitlabAuthClientInit()
 		//analyzer.Analysis(gitlabClient, options)
 		engine.NewEngine().Analysis(gitlabClient, options)
 	},
@@ -40,7 +40,7 @@ func ParseOptions(options *types.Options) {
 	options.RulePath = rulePath
 }
 
-func gitlabAuthClientInit() *gitlab.Client {
+func GitlabAuthClientInit() *gitlab.Client {
 	//git, err := gitlab.NewClient(token,gitlab.WithBaseURL("https://gitlab.example.com/api/v4"), gitlab.WithHTTPClient(httpClient))
 	git, err := gitlab.NewClient(options.Token, gitlab.WithBaseURL(options.Url))
 	if err != nil {

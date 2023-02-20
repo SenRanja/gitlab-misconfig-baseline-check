@@ -61,10 +61,11 @@ type BasicUser struct {
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/users.html
 type User struct {
-	ID                             int                `json:"id"`
-	Username                       string             `json:"username"`
-	Email                          string             `json:"email"`
-	Name                           string             `json:"name"`
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	// 只有active和blocked两种状态
 	State                          string             `json:"state"`
 	WebURL                         string             `json:"web_url"`
 	CreatedAt                      *time.Time         `json:"created_at"`
