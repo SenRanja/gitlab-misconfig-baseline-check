@@ -18,6 +18,7 @@ var detectionCmd = &cobra.Command{
 	Short: "detect gitlab misconfig ",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Init(logLevel)
 		ParseOptions(options)
 		//fmt.Println("detection called")
 		gitlabClient := GitlabAuthClientInit()

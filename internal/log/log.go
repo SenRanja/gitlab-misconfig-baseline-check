@@ -2,9 +2,14 @@ package log
 
 import "github.com/sirupsen/logrus"
 
-func init() {
+//func init() {
+//	// 判断用户是否输入准确,默认是info
+//	logrus.SetLevel(logrus.TraceLevel)
+//}
+
+func Init(log_level uint32) {
 	// 判断用户是否输入准确,默认是info
-	logrus.SetLevel(logrus.TraceLevel)
+	logrus.SetLevel(logrus.Level(log_level))
 }
 
 func Debug(v ...interface{}) {

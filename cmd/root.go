@@ -27,8 +27,8 @@ var (
 	projectId string
 	mode      string
 	check     string
-	//logLevel  string
-	rulePath string
+	rulePath  string
+	logLevel  uint32
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -66,4 +66,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", "baseline", "sacn mode")
 	rootCmd.PersistentFlags().StringVarP(&check, "check", "c", "project", "is check project")
 	rootCmd.PersistentFlags().StringVarP(&rulePath, "rule", "r", "", "rule")
+	//logLevel
+	rootCmd.PersistentFlags().Uint32VarP(&logLevel, "log", "v", 4, "log level. 4 is InfoLevel, 5, 6 is DebugLevel and TraceLevel")
 }

@@ -10,7 +10,7 @@ import (
 func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper) {
 
 	// 【Admin Settings】
-	log.Info("[#] Admin Settings检测开始")
+	log.Debug("[#] Admin Settings检测开始")
 	setting, err := GetAllEvents(gitlabClient)
 	if err != nil {
 		log.Error(err)

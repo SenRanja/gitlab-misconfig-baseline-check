@@ -2,8 +2,3 @@ package user
 
 type Analyzer struct {
 }
-
-// New 创建User分析模块
-func New() Analyzer {
-	return Analyzer{}
-}
