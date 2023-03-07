@@ -10,14 +10,13 @@ import (
 
 func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper) {
 
+	// 获取日志的天数
 	acquireTime := config.GetInt("audit_events.time.keywords")
-	acquireItems := config.GetInt("audit_events.items.keywords")
-	acquireItemsPerPage := config.GetInt("audit_events.per_page_items.keywords")
 
 	// 【日志审计】
 	log.Info("[#] 审计功能")
 	// 获取近期审计日志
-	aes, err := GetAllEvents(gitlabClient, acquireTime, acquireItems, acquireItemsPerPage)
+	aes, err := GetAllEvents(gitlabClient, acquireTime)
 	if err != nil {
 		fmt.Println(err)
 	}

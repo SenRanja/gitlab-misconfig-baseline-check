@@ -9,14 +9,9 @@ import (
 type Analyzer struct {
 }
 
-// New 创建java解析器
-func New() Analyzer {
-	return Analyzer{}
-}
-
 // 获取近期的审计事件。默认获取1000天内、2000条目的审计日志
 // 这是审计类的基础类。其他基线检查项在获取此方法的返回值后进行遍历统计。
-func GetAllEvents(gitlabClient *gitlab.Client, acquireTime int, acquireItems int, acquireItemsPerPage int) ([]*gitlab.AuditEvent, error) {
+func GetAllEvents(gitlabClient *gitlab.Client, acquireTime int) ([]*gitlab.AuditEvent, error) {
 	var aes_all []*gitlab.AuditEvent
 	var err error
 
@@ -30,7 +25,7 @@ func GetAllEvents(gitlabClient *gitlab.Client, acquireTime int, acquireItems int
 		opt = &gitlab.ListAuditEventsOptions{
 			ListOptions: gitlab.ListOptions{
 				Page:    i,
-				PerPage: acquireItemsPerPage,
+				PerPage: 2000,
 			},
 			CreatedAfter:  &CreatedAfterTime,
 			CreatedBefore: &CreatedBeforeTime,
@@ -43,7 +38,7 @@ func GetAllEvents(gitlabClient *gitlab.Client, acquireTime int, acquireItems int
 		}
 		aes_all = append(aes_all, aes...)
 
-		if len(aes) < acquireItemsPerPage || len(aes_all) > acquireItems {
+		if len(aes) < 2000 {
 			break
 		}
 	}

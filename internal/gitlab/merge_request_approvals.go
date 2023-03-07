@@ -17,7 +17,10 @@
 package gitlab
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -28,7 +31,7 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/merge_request_approvals.html
 type MergeRequestApprovalsService struct {
-	client *Client
+	Client *Client
 }
 
 // MergeRequestApprovals represents GitLab merge request approvals.
@@ -64,6 +67,67 @@ type MergeRequestApprovals struct {
 
 func (m MergeRequestApprovals) String() string {
 	return Stringify(m)
+}
+
+// {
+// "approvers": [],
+// "approver_groups": [],
+//
+// "approvals_before_merge": 0,
+//
+// // When a commit is added:
+// // false + false: Keep approvals
+// // true + false: Remove all approvals
+// // false + true: Remove approvals by Code Owners if their files changed
+// "reset_approvals_on_push": true,
+// "selective_code_owner_removals": false,
+//
+// // Prevent editing approval rules in merge requests
+// "disable_overriding_approvers_per_merge_request": true,
+//
+// // Prevent approval by author
+// "merge_requests_author_approval": false,
+//
+// // Prevent approvals by users who add commits
+// "merge_requests_disable_committers_approval": true,
+//
+// // Require user password to approve
+// "require_password_to_approve": true
+// }
+// ApprovalsSimple 是发起MR的审批，可以表示 每条规则之外的全部配置，如下：
+type ApprovalsSimple struct {
+	ResetApprovalsOnPush                      bool `json:"reset_approvals_on_push"`
+	SelectiveCodeOwnerRemovals                bool `json:"selective_code_owner_removals"`
+	DisableOverridingApproversPerMergeRequest bool `json:"disable_overriding_approvers_per_merge_request"`
+	MergeRequestsAuthorApproval               bool `json:"merge_requests_author_approval"`
+	MergeRequestsDisableCommittersApproval    bool `json:"merge_requests_disable_committers_approval"`
+	RequirePasswordToApprove                  bool `json:"require_password_to_approve"`
+}
+
+// 获取 ApprovalsSimple 的项目中的MR审批配置
+func (s *MergeRequestApprovalsService) GetProjectApprovals(pid interface{}, options ...RequestOptionFunc) (*ApprovalsSimple, *Response, error) {
+	project, err := parseID(pid)
+	if err != nil {
+		return nil, nil, err
+	}
+	u := fmt.Sprintf("projects/%s/approvals", PathEscape(project))
+
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	m := new(ApprovalsSimple)
+	resp, err := s.Client.Do(req, m)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return m, resp, err
 }
 
 // MergeRequestApproverGroup  represents GitLab project level merge request approver group.
@@ -103,6 +167,38 @@ type MergeRequestApprovalRule struct {
 	Section              string               `json:"section"`
 	ApprovedBy           []*BasicUser         `json:"approved_by"`
 	Approved             bool                 `json:"approved"`
+}
+
+// 获取 ApprovalsSimple 的项目中的MR审批配置
+func (s *MergeRequestApprovalsService) GetProjectApprovalsRules(pid interface{}, options ...RequestOptionFunc) ([]MergeRequestApprovalRule, error) {
+
+	var approval_rules []MergeRequestApprovalRule
+
+	project, err := parseID(pid)
+	if err != nil {
+		return nil, err
+	}
+
+	u := fmt.Sprintf("projects/%s/approval_rules", PathEscape(project))
+
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
+
+	//m := new(MergeRequestApprovalRuleList)
+	resp, err := s.Client.Do(req, nil)
+	//_, err = s.Client.Do(req, approval_rules)
+	if err != nil {
+		return nil, err
+	}
+	response := resp.Response.Body
+	body, err := io.ReadAll(response)
+	if err != nil {
+		return nil, err
+	}
+	//string_body := string(body)
+	//fmt.Println(string_body)
+	err = json.Unmarshal(body, &approval_rules)
+
+	return approval_rules, err
 }
 
 // MergeRequestApprovalState represents a GitLab merge request approval state.
@@ -147,13 +243,13 @@ func (s *MergeRequestApprovalsService) ApproveMergeRequest(pid interface{}, mr i
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approve", PathEscape(project), mr)
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	m := new(MergeRequestApprovals)
-	resp, err := s.client.Do(req, m)
+	resp, err := s.Client.Do(req, m)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -172,12 +268,12 @@ func (s *MergeRequestApprovalsService) UnapproveMergeRequest(pid interface{}, mr
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/unapprove", PathEscape(project), mr)
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ChangeMergeRequestApprovalConfigurationOptions represents the available
@@ -200,13 +296,13 @@ func (s *MergeRequestApprovalsService) GetConfiguration(pid interface{}, mr int,
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approvals", PathEscape(project), mr)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	m := new(MergeRequestApprovals)
-	resp, err := s.client.Do(req, m)
+	resp, err := s.Client.Do(req, m)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -225,13 +321,13 @@ func (s *MergeRequestApprovalsService) ChangeApprovalConfiguration(pid interface
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approvals", PathEscape(project), mergeRequest)
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	m := new(MergeRequest)
-	resp, err := s.client.Do(req, m)
+	resp, err := s.Client.Do(req, m)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -260,13 +356,13 @@ func (s *MergeRequestApprovalsService) ChangeAllowedApprovers(pid interface{}, m
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approvers", PathEscape(project), mergeRequest)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	m := new(MergeRequest)
-	resp, err := s.client.Do(req, m)
+	resp, err := s.Client.Do(req, m)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -285,13 +381,13 @@ func (s *MergeRequestApprovalsService) GetApprovalRules(pid interface{}, mergeRe
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approval_rules", PathEscape(project), mergeRequest)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var par []*MergeRequestApprovalRule
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -310,13 +406,13 @@ func (s *MergeRequestApprovalsService) GetApprovalState(pid interface{}, mergeRe
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approval_state", PathEscape(project), mergeRequest)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var pas *MergeRequestApprovalState
-	resp, err := s.client.Do(req, &pas)
+	resp, err := s.Client.Do(req, &pas)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -348,13 +444,13 @@ func (s *MergeRequestApprovalsService) CreateApprovalRule(pid interface{}, merge
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approval_rules", PathEscape(project), mergeRequest)
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	par := new(MergeRequestApprovalRule)
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -385,13 +481,13 @@ func (s *MergeRequestApprovalsService) UpdateApprovalRule(pid interface{}, merge
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approval_rules/%d", PathEscape(project), mergeRequest, approvalRule)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	par := new(MergeRequestApprovalRule)
-	resp, err := s.client.Do(req, &par)
+	resp, err := s.Client.Do(req, &par)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -410,10 +506,10 @@ func (s *MergeRequestApprovalsService) DeleteApprovalRule(pid interface{}, merge
 	}
 	u := fmt.Sprintf("projects/%s/merge_requests/%d/approval_rules/%d", PathEscape(project), mergeRequest, approvalRule)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }

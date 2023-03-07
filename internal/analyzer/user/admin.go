@@ -5,12 +5,12 @@ import (
 )
 
 // 统计 Admin 数量
-func countAdminNumbers(users []*gitlab.User) int {
-	var totalNumberOfAdmin = 0
+func countAdminNumbers(users []*gitlab.User) []string {
+	r := make([]string, 0, len(users))
 	for i := 0; i < len(users); i++ {
 		if users[i].IsAdmin {
-			totalNumberOfAdmin += 1
+			r = append(r, users[i].Username)
 		}
 	}
-	return totalNumberOfAdmin
+	return r
 }

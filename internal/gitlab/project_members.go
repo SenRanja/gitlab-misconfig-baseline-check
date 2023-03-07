@@ -26,7 +26,7 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/members.html
 type ProjectMembersService struct {
-	client *Client
+	Client *Client
 }
 
 // ListProjectMembersOptions represents the available ListProjectMembers() and
@@ -53,13 +53,13 @@ func (s *ProjectMembersService) ListProjectMembers(pid interface{}, opt *ListPro
 	}
 	u := fmt.Sprintf("projects/%s/members", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var pm []*ProjectMember
-	resp, err := s.client.Do(req, &pm)
+	resp, err := s.Client.Do(req, &pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -80,13 +80,13 @@ func (s *ProjectMembersService) ListAllProjectMembers(pid interface{}, opt *List
 	}
 	u := fmt.Sprintf("projects/%s/members/all", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var pm []*ProjectMember
-	resp, err := s.client.Do(req, &pm)
+	resp, err := s.Client.Do(req, &pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -105,13 +105,13 @@ func (s *ProjectMembersService) GetProjectMember(pid interface{}, user int, opti
 	}
 	u := fmt.Sprintf("projects/%s/members/%d", PathEscape(project), user)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pm := new(ProjectMember)
-	resp, err := s.client.Do(req, pm)
+	resp, err := s.Client.Do(req, pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -130,13 +130,13 @@ func (s *ProjectMembersService) GetInheritedProjectMember(pid interface{}, user 
 	}
 	u := fmt.Sprintf("projects/%s/members/all/%d", PathEscape(project), user)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pm := new(ProjectMember)
-	resp, err := s.client.Do(req, pm)
+	resp, err := s.Client.Do(req, pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -168,13 +168,13 @@ func (s *ProjectMembersService) AddProjectMember(pid interface{}, opt *AddProjec
 	}
 	u := fmt.Sprintf("projects/%s/members", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pm := new(ProjectMember)
-	resp, err := s.client.Do(req, pm)
+	resp, err := s.Client.Do(req, pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -202,13 +202,13 @@ func (s *ProjectMembersService) EditProjectMember(pid interface{}, user int, opt
 	}
 	u := fmt.Sprintf("projects/%s/members/%d", PathEscape(project), user)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pm := new(ProjectMember)
-	resp, err := s.client.Do(req, pm)
+	resp, err := s.Client.Do(req, pm)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -227,10 +227,10 @@ func (s *ProjectMembersService) DeleteProjectMember(pid interface{}, user int, o
 	}
 	u := fmt.Sprintf("projects/%s/members/%d", PathEscape(project), user)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }

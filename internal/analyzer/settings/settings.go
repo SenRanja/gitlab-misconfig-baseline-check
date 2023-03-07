@@ -42,6 +42,16 @@ func RequireAdminApprovalAfterUserSignupDetect(settings *gitlab.Settings) bool {
 	return settings.RequireAdminApprovalAfterUserSignup
 }
 
+// 用户注册是否默认为外部用户
+func SignUpDefaultExternalDetect(settings *gitlab.Settings) bool {
+	return settings.UserDefaultExternal
+}
+
+// 注册时是否邮箱匹配为内部用户
+func SignupInternalEmailRegDetect(settings *gitlab.Settings) string {
+	return settings.UserDefaultInternalRegex
+}
+
 // 默认分支保护
 func DefaultBranchProtectionDetect(settings *gitlab.Settings) int {
 	return settings.DefaultBranchProtection

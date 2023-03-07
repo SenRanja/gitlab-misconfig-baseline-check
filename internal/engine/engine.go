@@ -5,10 +5,9 @@ import (
 	"github.com/spf13/viper"
 	"gitlab-misconfig/bindata"
 	"gitlab-misconfig/internal/analyzer"
-	"gitlab-misconfig/internal/analyzer/audit_event"
 	"gitlab-misconfig/internal/analyzer/project"
-	"gitlab-misconfig/internal/analyzer/settings"
 	"gitlab-misconfig/internal/analyzer/user"
+	"gitlab-misconfig/internal/analyzer/version"
 	"gitlab-misconfig/internal/gitlab"
 	"gitlab-misconfig/internal/log"
 	"gitlab-misconfig/internal/types"
@@ -21,11 +20,11 @@ type Engine struct {
 func NewEngine() *Engine {
 	return &Engine{
 		Analyzers: []analyzer.Analyzer{
+			new(version.Analyzer),
 			new(user.Analyzer),
+			//new(settings.Analyzer),
 			new(project.Analyzer),
-			new(project.Analyzer),
-			new(audit_event.Analyzer),
-			new(settings.Analyzer),
+			//new(audit_event.Analyzer),
 		},
 	}
 }

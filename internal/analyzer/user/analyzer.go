@@ -4,9 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"gitlab-misconfig/internal/gitlab"
 	"gitlab-misconfig/internal/log"
-	"gitlab-misconfig/internal/rules"
 	"gitlab-misconfig/internal/types"
-	"strconv"
 )
 
 // 本`user`目录主要是围绕`用户`项的代码
@@ -18,51 +16,48 @@ import (
 func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper) {
 
 	// 【user】
-	users, usersService := getGitlabUsers(gitlabClient)
+	// getGitlabUsers()的返回值的第二个值是返回 usersService，目前没有用到
+	users, _ := getGitlabUsers(gitlabClient)
+
 	// admin数量
-	log.Info("[#] admin权限检查")
-	adminMaxNumbers := config.GetString("users.admin.admin_max_numbers.keywords")
+	adminMaxNumbers := config.GetInt("users.admin.admin_max_numbers.keywords")
 	totalNumberOfAdmin := countAdminNumbers(users)
-	log.Debug("total number of admin is ", totalNumberOfAdmin)
-	reslut, err := rules.CheckRule(strconv.Itoa(totalNumberOfAdmin), ">", adminMaxNumbers)
-	if reslut && err == nil {
-		log.Info("gitlab管理员数量多于", adminMaxNumbers, "人")
+	if len(totalNumberOfAdmin) > adminMaxNumbers {
+		log.Info("[-] 管理员人数过多，共有", len(totalNumberOfAdmin), "个管理员用户")
+	} else {
+		log.Info("[+] 管理员人数合理")
 	}
+	log.Info("[#] 管理员用户列表", ListPrint(totalNumberOfAdmin))
 
 	// auditor数量
-	log.Info("[#] auditor权限检查")
-	auditorMaxNumbers := config.GetString("users.auditor.auditor_max_numbers.keywords")
+	auditorLeastNumbers := config.GetInt("users.auditor.auditor_least_numbers.keywords")
 	totalNumberOfAuditor := countAuditorNumbers(users)
-	log.Debug("total number of auditor is ", totalNumberOfAuditor)
-	log.Info("gitlab 审计人员数量为：  ", totalNumberOfAuditor)
-
-	reslut, err = rules.CheckRule(strconv.Itoa(totalNumberOfAuditor), "<", auditorMaxNumbers)
-	if reslut && err == nil {
-		log.Info("gitlab审计人员至少设置", auditorMaxNumbers, "人")
+	if len(totalNumberOfAuditor) < auditorLeastNumbers {
+		log.Info("[-] 审计员人数过少，共有", len(totalNumberOfAuditor), "个审计员")
+	} else {
+		log.Info("[+] 审计员人数合理")
 	}
-
-	log.Info("[#] user权限检查")
+	log.Info("[#] 审计员用户列表", ListPrint(totalNumberOfAuditor))
 
 	// 用户双因素认证数量
 	countTwoFactorEnabledNum := countTwoFactorEnabled(users)
-	log.Debug("开启双因素认证用户数量", countTwoFactorEnabledNum)
+	log.Info("[ ] 开启双因素认证用户数量", len(countTwoFactorEnabledNum))
+	log.Info("[#] 开启双因素认证用户列表", ListPrint(countTwoFactorEnabledNum))
 
-	// 统计不活跃用户数量
+	// 统计未启用用户
+	StatUnactiveUsers := getUnstatUsers(users)
+	log.Info("[-] 未启用用户数量", len(StatUnactiveUsers))
+	log.Info("[#] 未启用用户名称列表", ListPrint(StatUnactiveUsers))
+
+	// 统计不活跃用户
 	unActiveUserNoLoginTime := config.GetInt("users.users.unactive_time.keywords")
-	countUnactiveUsers := getUnactiveUsers(users, unActiveUserNoLoginTime)
-	log.Debug("统计不活跃用户数量", len(countUnactiveUsers))
+	UnactiveUsers := getUnactiveUsers(users, unActiveUserNoLoginTime)
+	log.Info("[-] 不活跃用户数量", len(UnactiveUsers))
+	log.Info("[#] 不活跃用户名称列表", ListPrint(UnactiveUsers))
 
-	// 统计外部用户数量
+	// 统计外部用户
 	countExternal := countExternalDetect(users)
-	log.Debug("统计外部用户数量", countExternal)
-
-	// 遍历单个用户，输出group和project信息
-	for _, v := range users {
-		tmpRes, _, _ := usersService.GetUserMemberships(v.ID, nil, nil)
-		groupMembership := GetUserMembership(tmpRes, "group")
-		projectMembership := GetUserMembership(tmpRes, "project")
-		log.Info("组关系", groupMembership)
-		log.Info("项目关系", projectMembership)
-	}
+	log.Info("[ ] 统计外部用户数量", len(countExternal))
+	log.Info("[#] 外部用户列表", ListPrint(countExternal))
 
 }

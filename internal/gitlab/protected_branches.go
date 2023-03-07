@@ -28,7 +28,7 @@ import (
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/protected_branches.html
 type ProtectedBranchesService struct {
-	client *Client
+	Client *Client
 }
 
 // ProtectedBranch represents a protected branch.
@@ -75,13 +75,13 @@ func (s *ProtectedBranchesService) ListProtectedBranches(pid interface{}, opt *L
 	}
 	u := fmt.Sprintf("projects/%s/protected_branches", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var p []*ProtectedBranch
-	resp, err := s.client.Do(req, &p)
+	resp, err := s.Client.Do(req, &p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -100,13 +100,13 @@ func (s *ProtectedBranchesService) GetProtectedBranch(pid interface{}, branch st
 	}
 	u := fmt.Sprintf("projects/%s/protected_branches/%s", PathEscape(project), url.PathEscape(branch))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(ProtectedBranch)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -154,13 +154,13 @@ func (s *ProtectedBranchesService) ProtectRepositoryBranches(pid interface{}, op
 	}
 	u := fmt.Sprintf("projects/%s/protected_branches", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	p := new(ProtectedBranch)
-	resp, err := s.client.Do(req, p)
+	resp, err := s.Client.Do(req, p)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -180,12 +180,12 @@ func (s *ProtectedBranchesService) UnprotectRepositoryBranches(pid interface{}, 
 	}
 	u := fmt.Sprintf("projects/%s/protected_branches/%s", PathEscape(project), url.PathEscape(branch))
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // RequireCodeOwnerApprovalsOptions represents the available
@@ -208,10 +208,10 @@ func (s *ProtectedBranchesService) RequireCodeOwnerApprovals(pid interface{}, br
 	}
 	u := fmt.Sprintf("projects/%s/protected_branches/%s", PathEscape(project), url.PathEscape(branch))
 
-	req, err := s.client.NewRequest(http.MethodPatch, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPatch, u, opt, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }

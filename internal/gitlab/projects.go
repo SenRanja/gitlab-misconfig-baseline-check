@@ -39,8 +39,10 @@ type ProjectsService struct {
 // GitLab API docs: https://docs.gitlab.com/ee/api/projects.html
 // Project类 是查询仓库后，仓库返回的结果的解析
 type Project struct {
-	ID            int    `json:"id"`
-	Description   string `json:"description"`
+	// 就是项目的id
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	// 默认分支
 	DefaultBranch string `json:"default_branch"`
 	Public        bool   `json:"public"`
 	// 项目本身的可见受限
@@ -61,10 +63,12 @@ type Project struct {
 	// 带开发者的项目名，如 SenRanja/pomparser
 	NameWithNamespace string `json:"name_with_namespace"`
 	// 小写的项目名，如 pomparser
-	Path              string `json:"path"`
+	Path string `json:"path"`
+	// 全小写的NameWithNamespace eg: shenranjagroup/protectedbbranch
 	PathWithNamespace string `json:"path_with_namespace"`
-	IssuesEnabled     bool   `json:"issues_enabled"`
-	OpenIssuesCount   int    `json:"open_issues_count"`
+	// 默认开启
+	IssuesEnabled   bool `json:"issues_enabled"`
+	OpenIssuesCount int  `json:"open_issues_count"`
 	// 【官方称该项已废除，替代为merge_requests_access_level】受启用的合并请求功能限制
 	MergeRequestsEnabled bool `json:"merge_requests_enabled"`
 	// 合并前是否需要批准
@@ -148,17 +152,18 @@ type Project struct {
 		GroupFullPath    string `json:"group_full_path"`
 		GroupAccessLevel int    `json:"group_access_level"`
 	} `json:"shared_with_groups"`
-	Statistics            *Statistics        `json:"statistics"`
-	Links                 *Links             `json:"_links,omitempty"`
-	CIConfigPath          string             `json:"ci_config_path"`
-	CIDefaultGitDepth     int                `json:"ci_default_git_depth"`
-	CISeperateCache       bool               `json:"ci_separated_caches"`
-	CustomAttributes      []*CustomAttribute `json:"custom_attributes"`
-	ComplianceFrameworks  []string           `json:"compliance_frameworks"`
-	BuildCoverageRegex    string             `json:"build_coverage_regex"`
-	BuildTimeout          int                `json:"build_timeout"`
-	IssuesTemplate        string             `json:"issues_template"`
-	MergeRequestsTemplate string             `json:"merge_requests_template"`
+	SecurityAndComplianceEnabled bool               `json:"security_and_compliance_enabled"`
+	Statistics                   *Statistics        `json:"statistics"`
+	Links                        *Links             `json:"_links,omitempty"`
+	CIConfigPath                 string             `json:"ci_config_path"`
+	CIDefaultGitDepth            int                `json:"ci_default_git_depth"`
+	CISeperateCache              bool               `json:"ci_separated_caches"`
+	CustomAttributes             []*CustomAttribute `json:"custom_attributes"`
+	ComplianceFrameworks         []string           `json:"compliance_frameworks"`
+	BuildCoverageRegex           string             `json:"build_coverage_regex"`
+	BuildTimeout                 int                `json:"build_timeout"`
+	IssuesTemplate               string             `json:"issues_template"`
+	MergeRequestsTemplate        string             `json:"merge_requests_template"`
 	// 保持最新的工件
 	KeepLatestArtifact bool `json:"keep_latest_artifact"`
 	// 启用或禁用合并管道

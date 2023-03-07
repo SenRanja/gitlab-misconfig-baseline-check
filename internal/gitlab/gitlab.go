@@ -367,7 +367,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.LicenseTemplates = &LicenseTemplatesService{client: c}
 	c.ManagedLicenses = &ManagedLicensesService{client: c}
 	c.Markdown = &MarkdownService{client: c}
-	c.MergeRequestApprovals = &MergeRequestApprovalsService{client: c}
+	c.MergeRequestApprovals = &MergeRequestApprovalsService{Client: c}
 	c.MergeRequests = &MergeRequestsService{client: c, timeStats: timeStats}
 	c.Metadata = &MetadataService{client: c}
 	c.Milestones = &MilestonesService{client: c}
@@ -388,13 +388,13 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.ProjectFeatureFlags = &ProjectFeatureFlagService{client: c}
 	c.ProjectImportExport = &ProjectImportExportService{client: c}
 	c.ProjectIterations = &ProjectIterationsService{client: c}
-	c.ProjectMembers = &ProjectMembersService{client: c}
+	c.ProjectMembers = &ProjectMembersService{Client: c}
 	c.ProjectMirrors = &ProjectMirrorService{client: c}
 	c.ProjectSnippets = &ProjectSnippetsService{client: c}
 	c.ProjectVariables = &ProjectVariablesService{client: c}
 	c.ProjectVulnerabilities = &ProjectVulnerabilitiesService{client: c}
 	c.Projects = &ProjectsService{Client: c}
-	c.ProtectedBranches = &ProtectedBranchesService{client: c}
+	c.ProtectedBranches = &ProtectedBranchesService{Client: c}
 	c.ProtectedEnvironments = &ProtectedEnvironmentsService{client: c}
 	c.ProtectedTags = &ProtectedTagsService{client: c}
 	c.ReleaseLinks = &ReleaseLinksService{client: c}
@@ -841,7 +841,7 @@ func (c *Client) Do(req *retryablehttp.Request, v interface{}) (*Response, error
 		}
 		return c.Do(req, v)
 	}
-	defer resp.Body.Close()
+	//defer resp.Body.Close()
 
 	response := newResponse(resp)
 

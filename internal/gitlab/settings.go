@@ -265,7 +265,8 @@ type Settings struct {
 	// 新用户注册后处于等待admin批准的待批准状态
 	RequireAdminApprovalAfterUserSignup bool `json:"require_admin_approval_after_user_signup"`
 	// 双因素认证
-	RequireTwoFactorAuthentication             bool              `json:"require_two_factor_authentication"`
+	RequireTwoFactorAuthentication bool `json:"require_two_factor_authentication"`
+	//受限的能见度
 	RestrictedVisibilityLevels                 []VisibilityValue `json:"restricted_visibility_levels"`
 	RunnerTokenExpirationInterval              int               `json:"runner_token_expiration_interval"`
 	SearchRateLimit                            int               `json:"search_rate_limit"`

@@ -2,28 +2,22 @@ title = "gitlab-misconfig config"
 
 # project
 [projects]
-[projects.per_page_items]
-description = '分页请求处理，获取项目的单次请求数量'
-keywords = 2000
-[projects.max_acquire_items]
-description = '获取近期日志的最大条目数'
-keywords = 500000
 
-[projects.project.project_visibility]
-description= '项目可见性'
-keywords= 'internal'
+#[projects.project.project_visibility]
+#description= '项目可见性'
+#keywords= 'internal'
 
-[projects.project.project_pages_access_level]
-description= '项目权限'
-keywords= 'private'
+#[projects.project.project_pages_access_level]
+#description= '项目权限'
+#keywords= 'private'
 
-[projects.project.project_security_and_compliance_enabled]
-description= '是否启用gitlab安全功能'
-keywords= 'True'
+#[projects.project.project_security_and_compliance_enabled]
+#description= '是否启用gitlab安全功能'
+#keywords= 'True'
 
-[projects.project.project_approvals_before_merge]
-description= '合并前是否通过审批'
-keywords= 1
+[projects.project.project_approvals_before_merge_approval_number]
+description= 'Merge Request 审批人数'
+keywords= 2
 
 [projects.project.project_push_rules_unsigned_commits]
 description= '推送代码是否进过签名'
@@ -83,22 +77,27 @@ keywords= 'True'
 description= '要求gitlab管理员数量不要超过1个'
 keywords= 1
 
-[users.auditor.auditor_max_numbers ]
+[users.auditor.auditor_least_numbers ]
 description = '要求至少设置一名审计人员'
 keywords = 1
 
 [users.users.unactive_time]
 description = '不登录多少天数，则视为不活跃用户'
-keywords = 180
+keywords = 30
 
 # audit
-[audit_events]
-[audit_events.per_page_items]
-description = '分页请求处理，获取日志时的单次请求数量'
-keywords = 2000
 [audit_events.time]
 description = '获取近期日志的天数'
 keywords = 180
-[audit_events.items]
-description = '获取近期日志的最大条目数'
-keywords = 500000
+
+# admin setting
+[settings]
+[settings.password.minimum_length]
+description = '用户设置密码时，要求的最短密码的长度'
+keywords = 8
+[settings.session_expire_delay]
+description = '用户会话默认维持时间，单位:分钟'
+keywords = 30
+[settings.password.least_complex]
+description = '满足密码复杂度的最小项数(<=4，默认3)'
+keywords = 3
