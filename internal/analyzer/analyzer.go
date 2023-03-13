@@ -7,5 +7,5 @@ import (
 )
 
 type Analyzer interface {
-	AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper)
+	AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options, config *viper.Viper, output *types.Output)
 }

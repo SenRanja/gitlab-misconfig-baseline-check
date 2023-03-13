@@ -26,7 +26,7 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/lint.html
 type ValidateService struct {
-	client *Client
+	Client *Client
 }
 
 // LintResult represents the linting results.
@@ -65,13 +65,13 @@ type LintOptions struct {
 // Gitlab API docs:
 // https://docs.gitlab.com/ee/api/lint.html#validate-the-ci-yaml-configuration
 func (s *ValidateService) Lint(opts *LintOptions, options ...RequestOptionFunc) (*LintResult, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodPost, "ci/lint", &opts, options)
+	req, err := s.Client.NewRequest(http.MethodPost, "ci/lint", &opts, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	l := new(LintResult)
-	resp, err := s.client.Do(req, l)
+	resp, err := s.Client.Do(req, l)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -99,13 +99,13 @@ func (s *ValidateService) ProjectNamespaceLint(pid interface{}, opt *ProjectName
 	}
 	u := fmt.Sprintf("projects/%s/ci/lint", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, &opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, &opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	l := new(ProjectLintResult)
-	resp, err := s.client.Do(req, l)
+	resp, err := s.Client.Do(req, l)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -132,13 +132,13 @@ func (s *ValidateService) ProjectLint(pid interface{}, opt *ProjectLintOptions, 
 	}
 	u := fmt.Sprintf("projects/%s/ci/lint", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, &opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, &opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	l := new(ProjectLintResult)
-	resp, err := s.client.Do(req, l)
+	resp, err := s.Client.Do(req, l)
 	if err != nil {
 		return nil, resp, err
 	}

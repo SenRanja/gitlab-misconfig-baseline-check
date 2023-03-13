@@ -150,7 +150,6 @@ func (s *UsersService) ListUsers(opt *ListUsersOptions, options ...RequestOption
 	if err != nil {
 		return nil, nil, err
 	}
-
 	var usr []*User
 	resp, err := s.Client.Do(req, &usr)
 	if err != nil {
@@ -158,6 +157,23 @@ func (s *UsersService) ListUsers(opt *ListUsersOptions, options ...RequestOption
 	}
 
 	return usr, resp, err
+}
+
+func (s *UsersService) ListAdmins(opt *ListUsersOptions, options ...RequestOptionFunc) ([]*User, *Response, error) {
+	// 待会儿看一下传入的 opt, options这两个变量里有什么
+
+	req_with_admins, err := s.Client.NewRequest(http.MethodGet, "users", opt, options)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var admins []*User
+	resp_admins, err := s.Client.Do(req_with_admins, &admins)
+	if err != nil {
+		return nil, resp_admins, err
+	}
+
+	return admins, resp_admins, err
 }
 
 // GetUsersOptions represents the available GetUser() options.

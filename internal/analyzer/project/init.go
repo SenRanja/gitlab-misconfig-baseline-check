@@ -9,7 +9,7 @@ type Analyzer struct {
 }
 
 // 列出全部project
-func ListAllProjects(gitlabClient *gitlab.Client) ([]*gitlab.Project, *gitlab.ProjectsService, *gitlab.MergeRequestApprovalsService, *gitlab.ProjectMembersService, *gitlab.ProtectedBranchesService) {
+func ListAllProjects(gitlabClient *gitlab.Client) ([]*gitlab.Project, *gitlab.ProjectsService, *gitlab.MergeRequestApprovalsService, *gitlab.ProjectMembersService, *gitlab.ProtectedBranchesService, *gitlab.ProjectAccessTokensService, *gitlab.ValidateService) {
 
 	var opt gitlab.ListOptions
 	var listProjectsOptions *gitlab.ListProjectsOptions
@@ -53,5 +53,13 @@ func ListAllProjects(gitlabClient *gitlab.Client) ([]*gitlab.Project, *gitlab.Pr
 		Client: gitlabClient,
 	}
 
-	return projects, &projectsService, &approvalService, &projectMembersService, &protectedBranchesService
+	projectAccessTokensService := gitlab.ProjectAccessTokensService{
+		Client: gitlabClient,
+	}
+
+	projectValidateService := gitlab.ValidateService{
+		Client: gitlabClient,
+	}
+
+	return projects, &projectsService, &approvalService, &projectMembersService, &protectedBranchesService, &projectAccessTokensService, &projectValidateService
 }

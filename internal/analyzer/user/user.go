@@ -23,11 +23,20 @@ func getGitlabUsers(gitlabClient *gitlab.Client) ([]*gitlab.User, gitlab.UsersSe
 	}
 	users := make([]*gitlab.User, 0, len(users_tmp))
 
+	admin_flag := true
+	admins, _, err := gitlabClient.Users.ListAdmins(&gitlab.ListUsersOptions{Admins: &admin_flag})
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(admins)
+
 	for _, v := range users_tmp {
 		if !PAT_bot_re.MatchString(v.Email) {
 			users = append(users, v)
 		}
 	}
+
+	users = append(users, admins...)
 
 	usersService := gitlab.UsersService{
 		Client: gitlabClient,

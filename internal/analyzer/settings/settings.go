@@ -37,6 +37,11 @@ func SignupEnabledDetect(settings *gitlab.Settings) bool {
 	return settings.SignupEnabled
 }
 
+// 是否开启邮箱注册
+func SendConfirmationEmailDetect(settings *gitlab.Settings) bool {
+	return settings.SendUserConfirmationEmail
+}
+
 // 新用户注册后处于等待admin批准的待批准状态
 func RequireAdminApprovalAfterUserSignupDetect(settings *gitlab.Settings) bool {
 	return settings.RequireAdminApprovalAfterUserSignup

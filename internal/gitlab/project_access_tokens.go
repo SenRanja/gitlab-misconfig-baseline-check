@@ -27,7 +27,7 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/project_access_tokens.html
 type ProjectAccessTokensService struct {
-	client *Client
+	Client *Client
 }
 
 // ProjectAccessToken represents a GitLab project access token.
@@ -70,13 +70,13 @@ func (s *ProjectAccessTokensService) ListProjectAccessTokens(pid interface{}, op
 	}
 	u := fmt.Sprintf("projects/%s/access_tokens", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var pats []*ProjectAccessToken
-	resp, err := s.client.Do(req, &pats)
+	resp, err := s.Client.Do(req, &pats)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -95,13 +95,13 @@ func (s *ProjectAccessTokensService) GetProjectAccessToken(pid interface{}, id i
 	}
 	u := fmt.Sprintf("projects/%s/access_tokens/%d", PathEscape(project), id)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pat := new(ProjectAccessToken)
-	resp, err := s.client.Do(req, &pat)
+	resp, err := s.Client.Do(req, &pat)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -132,13 +132,13 @@ func (s *ProjectAccessTokensService) CreateProjectAccessToken(pid interface{}, o
 	}
 	u := fmt.Sprintf("projects/%s/access_tokens", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	pat := new(ProjectAccessToken)
-	resp, err := s.client.Do(req, pat)
+	resp, err := s.Client.Do(req, pat)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -157,10 +157,10 @@ func (s *ProjectAccessTokensService) RevokeProjectAccessToken(pid interface{}, i
 	}
 	u := fmt.Sprintf("projects/%s/access_tokens/%d", PathEscape(project), id)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }

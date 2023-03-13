@@ -382,7 +382,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.PipelineTriggers = &PipelineTriggersService{client: c}
 	c.Pipelines = &PipelinesService{client: c}
 	c.PlanLimits = &PlanLimitsService{client: c}
-	c.ProjectAccessTokens = &ProjectAccessTokensService{client: c}
+	c.ProjectAccessTokens = &ProjectAccessTokensService{Client: c}
 	c.ProjectBadges = &ProjectBadgesService{client: c}
 	c.ProjectCluster = &ProjectClustersService{client: c}
 	c.ProjectFeatureFlags = &ProjectFeatureFlagService{client: c}
@@ -417,7 +417,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.Todos = &TodosService{client: c}
 	c.Topics = &TopicsService{client: c}
 	c.Users = &UsersService{Client: c}
-	c.Validate = &ValidateService{client: c}
+	c.Validate = &ValidateService{Client: c}
 	c.Version = &VersionService{client: c}
 	c.Wikis = &WikisService{client: c}
 
@@ -619,6 +619,8 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Requ
 
 // 我根据上面的 NewRequest()函数修改，去掉API函数拼接，方便对gitlab网页进行爬取来获取相关数据
 // 不清楚数据为什么没有回来，resp.Body中没有数据
+// 2023.3.7已清楚，过去resp.Body提前close关闭导致，只需要删除defer close之类的代码即可，利用内存泄漏读取
+// 但是此处尚无改动
 func (c *Client) NewRequestWithoutAPI(method, path string) (*retryablehttp.Request, error) {
 	u := *c.baseURL
 	unescaped, err := url.PathUnescape(path)
