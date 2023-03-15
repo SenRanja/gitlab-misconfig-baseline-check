@@ -33,7 +33,7 @@ type Version struct {
 }
 
 type Output struct {
-	Version     Version
+	Version     Version     `mapstructure:"version" json:"version"`
 	Projects    Projects    `mapstructure:"projects" json:"projects"`
 	Settings    Settings    `mapstructure:"settings" json:"settings"`
 	User        User        `mapstructure:"user" json:"user"`

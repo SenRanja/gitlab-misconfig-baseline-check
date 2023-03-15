@@ -2,126 +2,131 @@ title="output style and description"
 
 # gitlab version with risk
 [version]
+check_rule="版本"
+second_check_rule="gitlab版本风险检测"
+keyword=""
+description="当前gitlab版本是否存在安全风险"
+advice="更新gitlab版本"
 
 # admin setting
 [settings]
 [settings.password]
-check_rule="密码复杂度检测"
+check_rule="密码复杂度"
 keyword=true
 description="密码复杂度检测"
 advice="密码复杂度检测"
 [settings.password.length]
-check_rule="最小长度"
+check_rule="密码位数"
 keyword=true
-description="最小长度"
-advice="要求数字"
+description="要求新注册或改密用户的密码最小长度"
+advice="建议密码最小位数在8位及以上"
 [settings.password.num]
 check_rule="要求数字"
 keyword=true
 check_rule_en="password_require_num"
-description="要求数字"
-advice="要求数字"
+description="要求新注册或改密用户的密码是否要求数字字符"
+advice="建议密码要求数字字符"
 [settings.password.upper]
 check_rule="要求大写字母"
 keyword=true
-description="要求大写字母"
-advice="要求大写字母"
+description="要求新注册或改密用户的密码是否要求大写字母字符"
+advice="建议密码要求大写字母字符"
 [settings.password.lower]
 check_rule="要求小写字母"
 keyword=true
-description="要求大写字母"
-advice="要求大写字母"
+description="要求新注册或改密用户的密码是否要求小写字母"
+advice="建议密码要求小写字母字符"
 [settings.password.special]
 check_rule="要求特殊符号"
 keyword=true
-description="要求大写字母"
-advice="要求大写字母"
+description="要求新注册或改密用户的密码是否要求特殊符号"
+advice="建议密码要求特殊符号字符"
 
 [settings.two_factor_auth]
 check_rule="双因素认证"
 keyword=true
-description="双因素认证描述"
-advice="双因素认证建议"
+description="启用双因素认证下，用户登录需要使用密码和手机上的即时密码才能登陆"
+advice="结果检测仅作提示，建议高权限用户开启双因素认证"
 
 [settings.register]
 [settings.register.register_enable]
 check_rule="禁用注册功能"
 keyword=true
-description="此项为true则为禁用用户注册，为false是允许用户注册。"
-advice="禁用注册功能建议"
+description="开启注册功能可能导致陌生用户注册，增加风险"
+advice="建议关闭注册功能"
 [settings.register.email_confirmation]
-check_rule="启用邮箱验证"
+check_rule="邮箱验证"
 keyword=true
-description="启用邮箱验证描述"
-advice="启用邮箱验证建议"
+description="若注册开放，注册用户需要经过邮箱验证才能登陆"
+advice="启用邮箱验证"
 [settings.register.admin_approval]
-check_rule="新用户注册后需等待admin批准"
+check_rule="等待admin批准"
 keyword=true
-description="新用户注册后需等待admin批准描述"
-advice="新用户注册后需等待admin批准建议"
+description="若注册开放，注册用户需等待admin批准"
+advice="启用admin审批"
 [settings.register.external]
-check_rule="注册区分外部、内部用户"
+check_rule="默认外部用户"
 keyword=true
-description="注册区分外部、内部用户描述"
-advice="注册区分外部、内部用户建议"
+description="若注册开放，注册用户的邮箱若非内部邮箱正则可匹配，则默认为外部用户"
+advice="启用注册中的external选项，且设置内部用户邮箱正则匹配规则。"
 [settings.register.email_regexp_internal]
 check_rule="邮箱正则匹配内部用户"
 keyword=true
-description="邮箱正则匹配内部用户描述"
-advice="邮箱正则匹配内部用户建议"
+description="如果默认识别注册用户为外部用户，则需要设置内部用户的邮箱正则，识别内部用户"
+advice="设置邮箱正则匹配"
 
 [settings.init_project_enable_default_branch_protection]
-check_rule="初始化的项目启用默认分支保护"
+check_rule="新项目启用默认分支保护"
 keyword=2
-description="初始化的项目启用默认分支保护描述"
+description="默认分支保护分为0，1，2，其中0为不受保护，1是部分保护，2是完全保护。\n默认分支保护可以有效预防用户向默认分支提交代码时出现的危险操作。\n完全protected， 仅有Maintainer 角色的用户可以push；没有人可以强制推送。\n此项非admin强制全部仓库覆盖该规则，每个仓库的owner也可自己单独设置默认分支以及分支保护规则。\n该项检测如果是0则被认为不合规。"
 advice="初始化的项目启用默认分支保护建议"
 
 [settings.web_session_expire]
 check_rule="用户登录web页面会话存活时间"
-description="用户登录web页面会话存活时间描述"
-advice="用户登录web页面会话存活时间建议"
+description="用户登录web页面后，会话存活多久cookie失效时间。单位:分钟"
+advice="建议30分钟，该项可从配置项中修改合规阈值。"
 
 [settings.forbid_create_public_project]
 check_rule="禁止建立public项目"
-keyword="禁止更改可见性为public"
-description="禁止建立public项目描述"
-advice="禁止建立public项目保护建议"
+keyword=""
+description="此项由admin或者group设置受限的可见性。admin或者组管理员在该项复选框中勾选public后，用户新创建项目或者修改项目可见性时，将无法选择public权限。"
+advice="admin禁止public的可见性选项"
 
 
 [settings.pat_expire]
 check_rule="PAT(个人访问令牌)最大生存时间"
-description="PAT(个人访问令牌)最大生存时间描述"
-advice="PAT(个人访问令牌)最大生存时间建议"
+description="全局允许的PAT最大生存时间。PAT是用户自己生成的token，可以放在header中访问gitlab的API读写仓库。"
+advice="仅作提示"
 
 [user.inactive]
 check_rule="统计不活跃用户"
-description="统计不活跃用户描述"
-advice="统计不活跃用户建议"
+description="多长时间未登录用户，该项可以在配置文件中设置阈值"
+advice="定期清理不活跃用户"
 
 [user.unactive]
 check_rule="统计未启用账户"
-description="统计未启用账户描述"
-advice="统计未启用账户建议"
+description="从未登录过的用户属于未启用用户，通常该类用户由admin新创建但是无人使用的用户。"
+advice="定期清理未启用账户"
 
 [user.two_factor_auth]
 check_rule="统计开启双因素认证用户数量"
-description="统计开启双因素认证用户数量描述"
-advice="统计开启双因素认证用户数量建议"
+description=""
+advice="建议关键权限用户开启双因素认证"
 
 [user.admin]
 check_rule="统计admin数量"
-description="统计admin数量描述"
-advice="统计admin数量建议"
+description=""
+advice="建议admin用户数量不超过1人"
 
 [user.auditor]
 check_rule="统计审计人员数量"
-description="统计审计人员数量描述"
-advice="统计审计人员数量建议"
+description=""
+advice="建议审计人员数量至少1人"
 
 [user.external]
 check_rule="统计外部用户数量"
-description="统计外部用户数量描述"
-advice="统计外部用户数量建议"
+description=""
+advice=""
 
 
 [output_title]

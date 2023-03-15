@@ -639,7 +639,7 @@ func ExportExcelFromEE(o *types.Output) {
 			ConvertBool2StrIfEnable(v.RejectUnsignCommit),
 			v.RejectUnverifiedEmailPush,
 			v.RejectCommitUnverifiedPush,
-			v.CICD,
+			ConvertBool2StrIfEnable(v.CICD),
 			v.RunnersDescription,
 		}
 

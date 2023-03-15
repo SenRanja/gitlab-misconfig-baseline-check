@@ -432,7 +432,7 @@ func ExportExcelFromCE(o *types.Output) {
 			v.DefaultBranchProtected,
 			v.DefaultBranchProtectedDescription,
 			v.AccessTokenExpire,
-			v.CICD,
+			ConvertBool2StrIfEnable(v.CICD),
 			v.RunnersDescription,
 		}
 
