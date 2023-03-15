@@ -31,8 +31,7 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 
 			var o_single_project types.Project
 			o_single_project.Id = single_project.ID
-			posNameSpace := strings.Index(single_project.NameWithNamespace, "/")
-			o_single_project.NameSpace = single_project.NameWithNamespace[:posNameSpace]
+			o_single_project.NameSpace = single_project.Namespace.FullPath
 			o_single_project.ProjectName = single_project.Name
 
 			log.Info("目前正在检查项目 id:", single_project.ID, "Name:", single_project.NameWithNamespace)

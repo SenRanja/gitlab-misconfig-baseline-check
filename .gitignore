@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+﻿
 .idea
 =======
 # 日志问价 .log 文件
@@ -6,6 +6,9 @@
 
 # python编译出来的 .pyc 文件
 *.pyc
+
+# 临时生成的xlsx文件
+*.xlsx
 
 # 忽略pycharm
 **/.idea/
