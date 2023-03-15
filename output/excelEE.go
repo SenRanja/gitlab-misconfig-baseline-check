@@ -5,9 +5,10 @@ import (
 	"github.com/xuri/excelize/v2"
 	"gitlab-misconfig/internal/types"
 	"strconv"
+	"time"
 )
 
-func ExportExcel(o *types.Output) {
+func ExportExcelFromEE(o *types.Output) {
 
 	f := excelize.NewFile()
 	defer func() {
@@ -39,6 +40,23 @@ func ExportExcel(o *types.Output) {
 		fmt.Println(err)
 	}
 	err = f.SetSheetRow(sheetName_SettingsAndUser, name, &title)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// 版本风险检测
+	row++
+	versionCheckName, err := excelize.JoinCellName("A", row)
+	versionCheck := []interface{}{
+		o.Version.CheckRule,
+		o.Version.SecondCheckRule,
+		o.Version.Result,
+		"",
+		ConvertBool2StrIfComplaince(o.Version.Complaince),
+		o.Version.Description,
+		o.Version.Advice,
+	}
+	err = f.SetSheetRow(sheetName_SettingsAndUser, versionCheckName, &versionCheck)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -431,13 +449,31 @@ func ExportExcel(o *types.Output) {
 	}
 
 	// 美化外观
+	var unComplainceCellLocation string
 	headStyle, err := f.NewStyle(SetHeadStyle())
 	titleStyle, err := f.NewStyle(SetTitleStyle())
 	textStyle, err := f.NewStyle(SetTextStyle())
+	uncomplainceStyle, err := f.NewStyle(SetUncomplainceStyle())
 	//uncomplainceStyle, err := f.NewStyle(SetUncomplainceStyle())
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	// 自动找表格的最大行数  SettingsSheetRow
+	SettingsSheetRow := 1
+	var GetSettingsValueCellLocation, tmp_v string
+	for {
+		GetSettingsValueCellLocation = "A" + strconv.Itoa(SettingsSheetRow+1)
+		tmp_v, err = f.GetCellValue(sheetName_SettingsAndUser, GetSettingsValueCellLocation)
+		if tmp_v == "" {
+			break
+		}
+		SettingsSheetRow++
+	}
+
+	AEnd := "A" + strconv.Itoa(SettingsSheetRow)
+	GEnd := "G" + strconv.Itoa(SettingsSheetRow)
+
 	f.SetColWidth(sheetName_SettingsAndUser, "A", "A", 29.07)
 	f.SetColWidth(sheetName_SettingsAndUser, "B", "B", 27.67)
 	f.SetColWidth(sheetName_SettingsAndUser, "C", "C", 9.07)
@@ -446,8 +482,19 @@ func ExportExcel(o *types.Output) {
 	f.SetColWidth(sheetName_SettingsAndUser, "F", "F", 47)
 	f.SetColWidth(sheetName_SettingsAndUser, "G", "G", 37)
 	f.SetCellStyle(sheetName_SettingsAndUser, "A1", "G1", headStyle)
-	f.SetCellStyle(sheetName_SettingsAndUser, "A2", "A22", titleStyle)
-	f.SetCellStyle(sheetName_SettingsAndUser, "B2", "G22", textStyle)
+	f.SetCellStyle(sheetName_SettingsAndUser, "A2", AEnd, titleStyle)
+	f.SetCellStyle(sheetName_SettingsAndUser, "B2", GEnd, textStyle)
+	// 获取不合规的单元格并给予醒目颜色
+	rows, err := f.GetRows(sheetName_SettingsAndUser)
+	for row_id, row := range rows {
+		for col_id, colCell := range row {
+			if colCell == "不合规" {
+				// (row_id+1, col_id+1) 即 (toChar(row_id+1), col_id+1)
+				unComplainceCellLocation = toChar(col_id) + strconv.Itoa(row_id+1)
+				f.SetCellStyle(sheetName_SettingsAndUser, unComplainceCellLocation, unComplainceCellLocation, uncomplainceStyle)
+			}
+		}
+	}
 
 	//res, err := f.GetCols(sheetName_SettingsAndUser)
 	//fmt.Println(res)
@@ -479,10 +526,8 @@ func ExportExcel(o *types.Output) {
 		"推送规则：未GPG签名的提交",
 		"推送规则：拒绝未验证邮箱的用户的push",
 		"推送规则：commit作者和push者需要是经过邮箱验证的gitlab用户",
-		"xxx",
-		"xxxxx",
-		"xxxx",
-		"xxxx",
+		"CICD管道",
+		"共享runners",
 	}
 
 	row++
@@ -583,17 +628,19 @@ func ExportExcel(o *types.Output) {
 			v.MergeRequestsAuthorApproval,
 			v.MergeRequestsDisableCommittersApproval,
 			v.DisableOverridingApproversPerMergeRequest,
-			v.RequirePasswordToApprove,
+			ConvertBool2StrIfEnable(v.RequirePasswordToApprove),
 			v.ResetApprovalsOnPush,
 			v.MegerRequestApprovalsRulesRequireNumber,
 			v.DefaultBranchProtected,
 			v.DefaultBranchProtectedDescription,
 			v.AccessTokenExpire,
-			v.MergePipelinesEnabled,
-			v.MergeTrainsEnabled,
-			v.RejectUnsignCommit,
+			ConvertBool2StrIfEnable(v.MergePipelinesEnabled),
+			ConvertBool2StrIfEnable(v.MergeTrainsEnabled),
+			ConvertBool2StrIfEnable(v.RejectUnsignCommit),
 			v.RejectUnverifiedEmailPush,
 			v.RejectCommitUnverifiedPush,
+			v.CICD,
+			v.RunnersDescription,
 		}
 
 		single_project = ConvertBool2Str(single_project)
@@ -605,6 +652,18 @@ func ExportExcel(o *types.Output) {
 	}
 
 	// 美化外观
+	//获取项目共多少行，获取有内容的行的行数
+	ProjectSheetRow := 1
+	var GetValueCellLocation string
+	for {
+		GetValueCellLocation = "A" + strconv.Itoa(ProjectSheetRow+1)
+		tmp_v, err = f.GetCellValue(sheetName_Project, GetValueCellLocation)
+		if tmp_v == "" {
+			break
+		}
+		ProjectSheetRow++
+	}
+
 	headStyleProjectSheet, err := f.NewStyle(SetHeadProjectStyle())
 	titleStyleProjectSheet, err := f.NewStyle(SetTitleStyle())
 	textStyleProjectSheet, err := f.NewStyle(SetTextStyle())
@@ -612,6 +671,8 @@ func ExportExcel(o *types.Output) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	titleEndCellLocation := "A" + strconv.Itoa(ProjectSheetRow)
+	textEndCellLocation := "V" + strconv.Itoa(ProjectSheetRow)
 	f.SetColWidth(sheetName_Project, "A", "A", 8.4)
 	f.SetColWidth(sheetName_Project, "B", "B", 22)
 	f.SetColWidth(sheetName_Project, "C", "C", 25)
@@ -636,13 +697,26 @@ func ExportExcel(o *types.Output) {
 	f.SetColWidth(sheetName_Project, "V", "V", 11)
 	f.SetColWidth(sheetName_Project, "W", "W", 11)
 	f.SetColWidth(sheetName_Project, "X", "X", 11)
-	f.SetCellStyle(sheetName_Project, "A1", "T2", headStyleProjectSheet)
-	f.SetCellStyle(sheetName_Project, "A3", "A30", titleStyleProjectSheet)
-	f.SetCellStyle(sheetName_Project, "B3", "T30", textStyleProjectSheet)
+	f.SetCellStyle(sheetName_Project, "A1", "V2", headStyleProjectSheet)
+	f.SetCellStyle(sheetName_Project, "A3", titleEndCellLocation, titleStyleProjectSheet)
+	f.SetCellStyle(sheetName_Project, "B3", textEndCellLocation, textStyleProjectSheet)
+	// 获取不合规的单元格并给予醒目颜色
+	rows, err = f.GetRows(sheetName_Project)
+	for row_id, row := range rows {
+		for col_id, colCell := range row {
+			if colCell == "不合规" {
+				// (row_id+1, col_id+1) 即 (toChar(row_id+1), col_id+1)
+				unComplainceCellLocation = toChar(col_id) + strconv.Itoa(row_id+1)
+				f.SetCellStyle(sheetName_Project, unComplainceCellLocation, unComplainceCellLocation, uncomplainceStyle)
+			}
+		}
+	}
 
 	// ----------------------Save to a xlsx----------------------------------
+	currentTime := time.Now().Format("2006-01-02-15-04-05")
 
-	if err := f.SaveAs("gitlab基线检查.xlsx"); err != nil {
+	xlsxFileName := "gitlab基线检查-" + currentTime + ".xlsx"
+	if err := f.SaveAs(xlsxFileName); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -844,7 +918,7 @@ func SetTitleStyle() *excelize.Style {
 			Type:    "pattern", // gradient 渐变色    pattern   填充图案
 			Pattern: 1,         // 填充样式  当类型是 pattern 0-18 填充图案  1 实体填充
 			// Color:   []string{"#FF0000"}, // 当Type = pattern 时，只有一个
-			Color: []string{"#C4DBB9"},
+			Color: []string{"#FFEFD5"},
 		},
 
 		Font: &excelize.Font{
@@ -911,7 +985,7 @@ func SetTextStyle() *excelize.Style {
 			Type:    "pattern", // gradient 渐变色    pattern   填充图案
 			Pattern: 1,         // 填充样式  当类型是 pattern 0-18 填充图案  1 实体填充
 			// Color:   []string{"#FF0000"}, // 当Type = pattern 时，只有一个
-			Color: []string{"#FFFFFF"},
+			Color: []string{"#F0FFF0"},
 		},
 
 		Font: &excelize.Font{
@@ -978,7 +1052,7 @@ func SetUncomplainceStyle() *excelize.Style {
 			Type:    "pattern", // gradient 渐变色    pattern   填充图案
 			Pattern: 1,         // 填充样式  当类型是 pattern 0-18 填充图案  1 实体填充
 			// Color:   []string{"#FF0000"}, // 当Type = pattern 时，只有一个
-			Color: []string{"#FF0101"},
+			Color: []string{"#FF0000"},
 		},
 
 		Font: &excelize.Font{

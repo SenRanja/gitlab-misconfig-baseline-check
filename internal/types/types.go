@@ -18,7 +18,22 @@ type Options struct {
 	RulePath  string
 }
 
+type Version struct {
+	Version          string
+	Revision         string
+	VersionIsEE      bool
+	VersionExistRisk bool
+	CheckRule        string `mapstructure:"check_rule" json:"check_rule"`
+	SecondCheckRule  string `mapstructure:"second_check_rule" json:"second_check_rule"`
+	Result           string `mapstructure:"result" json:"result"`
+	Keyword          string `mapstructure:"keyword" json:"keyword"`
+	Complaince       bool   `mapstructure:"complaince" json:"complaince"`
+	Description      string `mapstructure:"description" json:"description"`
+	Advice           string `mapstructure:"advice" json:"advice"`
+}
+
 type Output struct {
+	Version     Version
 	Projects    Projects    `mapstructure:"projects" json:"projects"`
 	Settings    Settings    `mapstructure:"settings" json:"settings"`
 	User        User        `mapstructure:"user" json:"user"`
@@ -52,6 +67,20 @@ type Project struct {
 	AccessTokenExpire                         string
 	CICD                                      bool
 	CICDYamlStageNum                          int
+	RunnersDescription                        string
+}
+
+type Runner struct {
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	Active      bool   `json:"active"`
+	Paused      bool   `json:"paused"`
+	IsShared    bool   `json:"is_shared"`
+	IPAddress   string `json:"ip_address"`
+	RunnerType  string `json:"runner_type"`
+	Name        string `json:"name"`
+	Online      bool   `json:"online"`
+	Status      string `json:"status"`
 }
 
 type OutputTitle struct {

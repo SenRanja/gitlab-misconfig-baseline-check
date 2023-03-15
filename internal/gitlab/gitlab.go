@@ -406,7 +406,7 @@ func newClient(options ...ClientOptionFunc) (*Client, error) {
 	c.ResourceMilestoneEvents = &ResourceMilestoneEventsService{client: c}
 	c.ResourceStateEvents = &ResourceStateEventsService{client: c}
 	c.ResourceWeightEvents = &ResourceWeightEventsService{client: c}
-	c.Runners = &RunnersService{client: c}
+	c.Runners = &RunnersService{Client: c}
 	c.Search = &SearchService{client: c}
 	c.Services = &ServicesService{client: c}
 	c.Settings = &SettingsService{client: c}

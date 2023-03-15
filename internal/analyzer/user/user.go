@@ -82,7 +82,7 @@ func getUnactiveUsers(users []*gitlab.User, unactive_time int) []string {
 
 	var unActiveUsers []string
 	for _, user := range users {
-		if user.LastActivityOn != nil && user.LastSignInAt.Before(noLoginTime) {
+		if user.LastActivityOn != nil && user.LastSignInAt != nil && user.LastSignInAt.Before(noLoginTime) {
 			unActiveUsers = append(unActiveUsers, user.Username)
 		}
 	}

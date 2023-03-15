@@ -8,6 +8,7 @@ import (
 	"gitlab-misconfig/internal/analyzer/project"
 	"gitlab-misconfig/internal/analyzer/settings"
 	"gitlab-misconfig/internal/analyzer/user"
+	"gitlab-misconfig/internal/analyzer/version"
 	"gitlab-misconfig/internal/gitlab"
 	"gitlab-misconfig/internal/log"
 	"gitlab-misconfig/internal/types"
@@ -21,7 +22,7 @@ type Engine struct {
 func NewEngine() *Engine {
 	return &Engine{
 		Analyzers: []analyzer.Analyzer{
-			//new(version.Analyzer),
+			new(version.Analyzer),
 			new(user.Analyzer),
 			new(settings.Analyzer),
 			new(project.Analyzer),
@@ -39,8 +40,13 @@ func (e *Engine) Analysis(gitlabClient *gitlab.Client, options *types.Options) {
 	for _, analyzer := range e.Analyzers {
 		analyzer.AutoAnalysis(gitlabClient, options, config, output)
 	}
-	// 传递给格式输出
-	excel.ExportExcel(output)
+
+	// 传递给格式输出 区分EE和CE版
+	if output.Version.VersionIsEE {
+		excel.ExportExcelFromEE(output)
+	} else {
+		excel.ExportExcelFromCE(output)
+	}
 }
 
 func initConfig(rulePath string) *viper.Viper {

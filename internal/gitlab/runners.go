@@ -27,7 +27,7 @@ import (
 //
 // GitLab API docs: https://docs.gitlab.com/ee/api/runners.html
 type RunnersService struct {
-	client *Client
+	Client *Client
 }
 
 // Runner represents a GitLab CI Runner.
@@ -109,13 +109,13 @@ type ListRunnersOptions struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#list-owned-runners
 func (s *RunnersService) ListRunners(opt *ListRunnersOptions, options ...RequestOptionFunc) ([]*Runner, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "runners", opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, "runners", opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var rs []*Runner
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -129,13 +129,13 @@ func (s *RunnersService) ListRunners(opt *ListRunnersOptions, options ...Request
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#list-all-runners
 func (s *RunnersService) ListAllRunners(opt *ListRunnersOptions, options ...RequestOptionFunc) ([]*Runner, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodGet, "runners/all", opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, "runners/all", opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var rs []*Runner
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -154,13 +154,13 @@ func (s *RunnersService) GetRunnerDetails(rid interface{}, options ...RequestOpt
 	}
 	u := fmt.Sprintf("runners/%s", runner)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rs := new(RunnerDetails)
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -196,13 +196,13 @@ func (s *RunnersService) UpdateRunnerDetails(rid interface{}, opt *UpdateRunnerD
 	}
 	u := fmt.Sprintf("runners/%s", runner)
 
-	req, err := s.client.NewRequest(http.MethodPut, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPut, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rs := new(RunnerDetails)
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -221,12 +221,12 @@ func (s *RunnersService) RemoveRunner(rid interface{}, options ...RequestOptionF
 	}
 	u := fmt.Sprintf("runners/%s", runner)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ListRunnerJobsOptions represents the available ListRunnerJobs()
@@ -252,13 +252,13 @@ func (s *RunnersService) ListRunnerJobs(rid interface{}, opt *ListRunnerJobsOpti
 	}
 	u := fmt.Sprintf("runners/%s/jobs", runner)
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var rs []*Job
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -284,13 +284,13 @@ func (s *RunnersService) ListProjectRunners(pid interface{}, opt *ListProjectRun
 	}
 	u := fmt.Sprintf("projects/%s/runners", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var rs []*Runner
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -318,13 +318,13 @@ func (s *RunnersService) EnableProjectRunner(pid interface{}, opt *EnableProject
 	}
 	u := fmt.Sprintf("projects/%s/runners", PathEscape(project))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(Runner)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -343,12 +343,12 @@ func (s *RunnersService) DisableProjectRunner(pid interface{}, runner int, optio
 	}
 	u := fmt.Sprintf("projects/%s/runners/%d", PathEscape(project), runner)
 
-	req, err := s.client.NewRequest(http.MethodDelete, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, u, nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // ListGroupsRunnersOptions represents the available ListGroupsRunners() options.
@@ -375,13 +375,13 @@ func (s *RunnersService) ListGroupsRunners(gid interface{}, opt *ListGroupsRunne
 	}
 	u := fmt.Sprintf("groups/%s/runners", PathEscape(group))
 
-	req, err := s.client.NewRequest(http.MethodGet, u, opt, options)
+	req, err := s.Client.NewRequest(http.MethodGet, u, opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var rs []*Runner
-	resp, err := s.client.Do(req, &rs)
+	resp, err := s.Client.Do(req, &rs)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -426,13 +426,13 @@ type RegisterNewRunnerInfoOptions struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#register-a-new-runner
 func (s *RunnersService) RegisterNewRunner(opt *RegisterNewRunnerOptions, options ...RequestOptionFunc) (*Runner, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodPost, "runners", opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, "runners", opt, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(Runner)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -454,12 +454,12 @@ type DeleteRegisteredRunnerOptions struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#delete-a-runner-by-authentication-token
 func (s *RunnersService) DeleteRegisteredRunner(opt *DeleteRegisteredRunnerOptions, options ...RequestOptionFunc) (*Response, error) {
-	req, err := s.client.NewRequest(http.MethodDelete, "runners", opt, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, "runners", opt, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // DeleteRegisteredRunnerByID deletes a runner by ID.
@@ -467,12 +467,12 @@ func (s *RunnersService) DeleteRegisteredRunner(opt *DeleteRegisteredRunnerOptio
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#delete-a-runner-by-id
 func (s *RunnersService) DeleteRegisteredRunnerByID(rid int, options ...RequestOptionFunc) (*Response, error) {
-	req, err := s.client.NewRequest(http.MethodDelete, fmt.Sprintf("runners/%d", rid), nil, options)
+	req, err := s.Client.NewRequest(http.MethodDelete, fmt.Sprintf("runners/%d", rid), nil, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 // VerifyRegisteredRunnerOptions represents the available
@@ -489,12 +489,12 @@ type VerifyRegisteredRunnerOptions struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#verify-authentication-for-a-registered-runner
 func (s *RunnersService) VerifyRegisteredRunner(opt *VerifyRegisteredRunnerOptions, options ...RequestOptionFunc) (*Response, error) {
-	req, err := s.client.NewRequest(http.MethodPost, "runners/verify", opt, options)
+	req, err := s.Client.NewRequest(http.MethodPost, "runners/verify", opt, options)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.client.Do(req, nil)
+	return s.Client.Do(req, nil)
 }
 
 type RunnerRegistrationToken struct {
@@ -508,13 +508,13 @@ type RunnerRegistrationToken struct {
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/runners.html#reset-instances-runner-registration-token
 func (s *RunnersService) ResetInstanceRunnerRegistrationToken(options ...RequestOptionFunc) (*RunnerRegistrationToken, *Response, error) {
-	req, err := s.client.NewRequest(http.MethodPost, "runners/reset_registration_token", nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, "runners/reset_registration_token", nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(RunnerRegistrationToken)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -533,13 +533,13 @@ func (s *RunnersService) ResetGroupRunnerRegistrationToken(gid interface{}, opti
 	}
 	u := fmt.Sprintf("groups/%s/runners/reset_registration_token", PathEscape(group))
 
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(RunnerRegistrationToken)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -557,13 +557,13 @@ func (s *RunnersService) ResetProjectRunnerRegistrationToken(pid interface{}, op
 		return nil, nil, err
 	}
 	u := fmt.Sprintf("projects/%s/runners/reset_registration_token", PathEscape(project))
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(RunnerRegistrationToken)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -582,13 +582,13 @@ type RunnerAuthenticationToken struct {
 // https://docs.gitlab.com/ee/api/runners.html#reset-runners-authentication-token-by-using-the-runner-id
 func (s *RunnersService) ResetRunnerAuthenticationToken(rid int, options ...RequestOptionFunc) (*RunnerAuthenticationToken, *Response, error) {
 	u := fmt.Sprintf("runners/%d/reset_authentication_token", rid)
-	req, err := s.client.NewRequest(http.MethodPost, u, nil, options)
+	req, err := s.Client.NewRequest(http.MethodPost, u, nil, options)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	r := new(RunnerAuthenticationToken)
-	resp, err := s.client.Do(req, &r)
+	resp, err := s.Client.Do(req, &r)
 	if err != nil {
 		return nil, resp, err
 	}
