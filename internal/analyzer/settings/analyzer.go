@@ -53,11 +53,11 @@ func (Analyzer) AutoAnalysis(gitlabClient *gitlab.Client, options *types.Options
 
 		if signupInternalEmailRegDetect == "" {
 			output.Settings.Register.EmailRegexpInternal.Result = true
-			output.Settings.Register.EmailRegexpInternal.Complaince = true
+			output.Settings.Register.EmailRegexpInternal.Complaince = false
 			log.Info("[-] 未配置内部用户邮箱匹配")
 		} else {
 			output.Settings.Register.EmailRegexpInternal.Result = false
-			output.Settings.Register.EmailRegexpInternal.Complaince = false
+			output.Settings.Register.EmailRegexpInternal.Complaince = true
 			log.Info("[+] 已配置内部用户邮箱匹配")
 		}
 

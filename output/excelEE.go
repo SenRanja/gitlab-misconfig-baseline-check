@@ -188,9 +188,11 @@ func ExportExcelFromEE(o *types.Output) {
 	register_enable := []interface{}{
 		o.Settings.Register.RegisterEnable.CheckRule,
 		"",
-		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Result),
+		// 由于检查项是"禁用注册"，而此处result是是否启用注册，true为启用，false为禁用
+		// 所以论"禁用注册"则需要取反
+		ConvertBool2StrIfEnable(!o.Settings.Register.RegisterEnable.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.RegisterEnable.Complaince),
+		ConvertRegisterEnable2ForbidenRegisterBool(o.Settings.Register.RegisterEnable.Complaince),
 		o.Settings.Register.RegisterEnable.Description,
 		o.Settings.Register.RegisterEnable.Advice,
 	}
@@ -208,7 +210,7 @@ func ExportExcelFromEE(o *types.Output) {
 		o.Settings.Register.EmailConfirmation.CheckRule,
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailConfirmation.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailConfirmation.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.EmailConfirmation.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.EmailConfirmation.Complaince),
 		o.Settings.Register.EmailConfirmation.Description,
 		o.Settings.Register.EmailConfirmation.Advice,
 	}
@@ -225,7 +227,7 @@ func ExportExcelFromEE(o *types.Output) {
 		o.Settings.Register.AdminApproval.CheckRule,
 		ConvertBool2StrIfEnable(o.Settings.Register.AdminApproval.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.AdminApproval.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.AdminApproval.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.AdminApproval.Complaince),
 		o.Settings.Register.AdminApproval.Description,
 		o.Settings.Register.AdminApproval.Advice,
 	}
@@ -242,7 +244,7 @@ func ExportExcelFromEE(o *types.Output) {
 		o.Settings.Register.External.CheckRule,
 		ConvertBool2StrIfEnable(o.Settings.Register.External.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.External.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.External.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.External.Complaince),
 		o.Settings.Register.External.Description,
 		o.Settings.Register.External.Advice,
 	}
@@ -260,7 +262,7 @@ func ExportExcelFromEE(o *types.Output) {
 		o.Settings.Register.EmailRegexpInternal.CheckRule,
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailRegexpInternal.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailRegexpInternal.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.EmailRegexpInternal.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.EmailRegexpInternal.Complaince),
 		o.Settings.Register.EmailRegexpInternal.Description,
 		o.Settings.Register.EmailRegexpInternal.Advice,
 	}
@@ -718,6 +720,14 @@ func ExportExcelFromEE(o *types.Output) {
 	xlsxFileName := "gitlab基线检查-" + currentTime + ".xlsx"
 	if err := f.SaveAs(xlsxFileName); err != nil {
 		fmt.Println(err)
+	}
+}
+
+func ConvertRegisterEnable2ForbidenRegisterBool(x bool) string {
+	if x == false {
+		return ""
+	} else {
+		return "合规"
 	}
 }
 

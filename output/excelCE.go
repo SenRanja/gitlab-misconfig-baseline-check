@@ -101,9 +101,9 @@ func ExportExcelFromCE(o *types.Output) {
 	register_enable := []interface{}{
 		o.Settings.Register.RegisterEnable.CheckRule,
 		"",
-		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Result),
+		ConvertBool2StrIfEnable(!o.Settings.Register.RegisterEnable.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.RegisterEnable.Complaince),
+		ConvertRegisterEnable2ForbidenRegisterBool(o.Settings.Register.RegisterEnable.Complaince),
 		o.Settings.Register.RegisterEnable.Description,
 		o.Settings.Register.RegisterEnable.Advice,
 	}
@@ -137,9 +137,9 @@ func ExportExcelFromCE(o *types.Output) {
 	admin_approval := []interface{}{
 		"",
 		o.Settings.Register.AdminApproval.CheckRule,
-		ConvertBool2StrIfEnable(o.Settings.Register.AdminApproval.Result),
-		ConvertBool2StrIfEnable(o.Settings.Register.AdminApproval.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.AdminApproval.Complaince),
+		ConvertBool2StrIfEnable(!o.Settings.Register.RegisterEnable.Result),
+		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Keyword),
+		ConvertRegisterEnable2ForbidenRegisterBool(o.Settings.Register.RegisterEnable.Complaince),
 		o.Settings.Register.AdminApproval.Description,
 		o.Settings.Register.AdminApproval.Advice,
 	}
@@ -511,5 +511,15 @@ func ExportExcelFromCE(o *types.Output) {
 	xlsxFileName := "gitlab基线检查-" + currentTime + ".xlsx"
 	if err := f.SaveAs(xlsxFileName); err != nil {
 		fmt.Println(err)
+	}
+}
+
+// 如果注册功能关闭，则注册的几项的合规性不输出
+// 如果注册功能开启，则输出
+func RegisterEnableCheckComplainceOutput(o *types.Output, s bool) string {
+	if o.Settings.Register.RegisterEnable.Result {
+		return ConvertBool2StrIfComplaince(s)
+	} else {
+		return ""
 	}
 }
