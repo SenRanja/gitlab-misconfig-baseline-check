@@ -121,7 +121,7 @@ func ExportExcelFromCE(o *types.Output) {
 		o.Settings.Register.EmailConfirmation.CheckRule,
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailConfirmation.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.EmailConfirmation.Keyword),
-		ConvertBool2StrIfComplaince(o.Settings.Register.EmailConfirmation.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.EmailConfirmation.Complaince),
 		o.Settings.Register.EmailConfirmation.Description,
 		o.Settings.Register.EmailConfirmation.Advice,
 	}
@@ -139,7 +139,7 @@ func ExportExcelFromCE(o *types.Output) {
 		o.Settings.Register.AdminApproval.CheckRule,
 		ConvertBool2StrIfEnable(!o.Settings.Register.RegisterEnable.Result),
 		ConvertBool2StrIfEnable(o.Settings.Register.RegisterEnable.Keyword),
-		ConvertRegisterEnable2ForbidenRegisterBool(o.Settings.Register.RegisterEnable.Complaince),
+		RegisterEnableCheckComplainceOutput(o, o.Settings.Register.RegisterEnable.Complaince),
 		o.Settings.Register.AdminApproval.Description,
 		o.Settings.Register.AdminApproval.Advice,
 	}
